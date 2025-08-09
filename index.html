@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Firebase App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="p-4 bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">แอปพลิเคชัน Firebase ของฉัน</h1>
+        
+        <!-- ส่วนสำหรับแสดง User ID -->
+        <div class="mb-4 text-center">
+            <p class="text-sm text-gray-600">User ID ของคุณ:</p>
+            <p id="userIdDisplay" class="font-mono bg-gray-200 p-2 rounded-md break-all text-gray-700"></p>
+        </div>
+
+        <!-- ส่วนสำหรับแสดงสถานะการเชื่อมต่อ -->
+        <div id="statusDisplay" class="text-center p-3 rounded-lg text-white mb-6">
+            <span id="statusMessage" class="font-medium">กำลังเชื่อมต่อ...</span>
+        </div>
+
+        <!-- ส่วนสำหรับแสดงข้อมูลจาก Firestore -->
+        <div id="dataDisplay" class="bg-gray-50 p-4 rounded-md h-64 overflow-y-auto border border-gray-200">
+            <p class="text-center text-gray-500">รอข้อมูลจาก Firestore...</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Global variables for Firebase
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Initialize Firebase
+        let app;
+        let db;
+        let auth;
+        let userId = 'anonymous';
+
+        // Get UI elements
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const statusDisplay = document.getElementById('statusDisplay');
+        const statusMessage = document.getElementById('statusMessage');
+        const dataDisplay = document.getElementById('dataDisplay');
+
+        // Function to update status message
+        function updateStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusDisplay.className = 'text-center p-3 rounded-lg text-white mb-6'; // Reset classes
+            if (type === 'success') {
+                statusDisplay.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                statusDisplay.classList.add('bg-red-500');
+            } else {
+                statusDisplay.classList.add('bg-blue-500');
+            }
+        }
+
+        // Initialize and authenticate
+        async function initializeAppAndAuth() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    throw new Error("Firebase configuration is not available.");
+                }
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                updateStatus('กำลังตรวจสอบสิทธิ์ผู้ใช้...');
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Listen for auth state changes
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdDisplay.textContent = userId;
+                        updateStatus('ลงชื่อเข้าใช้สำเร็จ!', 'success');
+                        
+                        // Start listening to Firestore data after authentication
+                        listenToFirestoreData(userId);
+                    } else {
+                        userId = 'anonymous';
+                        userIdDisplay.textContent = 'ยังไม่ได้ลงชื่อเข้าใช้';
+                        updateStatus('ลงชื่อเข้าใช้ไม่สำเร็จ', 'error');
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or authentication failed:", error);
+                updateStatus('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            }
+        }
+
+        // Listen to Firestore data changes
+        function listenToFirestoreData(currentUserId) {
+            if (!db) {
+                console.error("Firestore is not initialized.");
+                return;
+            }
+
+            try {
+                // Example of listening to a public collection
+                const publicCollectionPath = `artifacts/${appId}/public/data/myPublicData`;
+                const publicCollectionRef = collection(db, publicCollectionPath);
+                
+                // Example of listening to a private collection
+                const privateCollectionPath = `artifacts/${appId}/users/${currentUserId}/myPrivateData`;
+                const privateCollectionRef = collection(db, privateCollectionPath);
+
+                // Listen to public data
+                onSnapshot(publicCollectionRef, (snapshot) => {
+                    dataDisplay.innerHTML = '<h3 class="text-lg font-semibold text-gray-800 mb-2">ข้อมูลสาธารณะ:</h3>';
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        dataDisplay.innerHTML += `<div class="bg-gray-200 p-2 rounded-md mb-2"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                    });
+                }, (error) => {
+                    console.error("Error listening to public data:", error);
+                    dataDisplay.innerHTML += `<p class="text-red-500">Error: ${error.message}</p>`;
+                });
+
+                // Listen to private data (optional, for demonstration)
+                onSnapshot(privateCollectionRef, (snapshot) => {
+                    dataDisplay.innerHTML += '<h3 class="text-lg font-semibold text-gray-800 mt-4 mb-2">ข้อมูลส่วนตัว:</h3>';
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        dataDisplay.innerHTML += `<div class="bg-gray-200 p-2 rounded-md mb-2"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                    });
+                }, (error) => {
+                    console.error("Error listening to private data:", error);
+                    dataDisplay.innerHTML += `<p class="text-red-500">Error: ${error.message}</p>`;
+                });
+
+                // Add some initial data to demonstrate functionality
+                // We'll use a timeout to ensure the listener is active before writing.
+                setTimeout(async () => {
+                    try {
+                        const testDocRef = doc(db, `artifacts/${appId}/public/data/myPublicData/testDoc`);
+                        await setDoc(testDocRef, {
+                            message: "ข้อมูลสาธารณะนี้ถูกเขียนโดยแอป!",
+                            timestamp: new Date()
+                        });
+                        console.log("Sample public data written successfully.");
+
+                        const privateDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/myPrivateData/userDoc`);
+                        await setDoc(privateDocRef, {
+                            message: `ข้อมูลส่วนตัวนี้เป็นของคุณ ${currentUserId} โดยเฉพาะ`,
+                            timestamp: new Date()
+                        });
+                        console.log("Sample private data written successfully.");
+                    } catch (e) {
+                        console.error("Error adding initial data: ", e);
+                    }
+                }, 3000); // 3-second delay
+                
+            } catch (error) {
+                console.error("Error setting up Firestore listeners:", error);
+                dataDisplay.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Start the app
+        initializeAppAndAuth();
+    </script>
+</body>
+</html>
