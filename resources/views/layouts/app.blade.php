@@ -343,6 +343,11 @@
                         </li>
                     @endif
                     <li class="nav-item">
+                        <a class="nav-link {{ Request::routeIs('scanner.index') ? 'active' : '' }}" href="{{ route('scanner.index') }}">
+                            <i class="fas fa-barcode"></i> สแกนบาร์โค้ด
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <h6 class="sidebar-heading">
                             <span>การจัดการใบขอเบิก</span>
                         </h6>
@@ -479,6 +484,11 @@
                                 </a>
                             </li>
                         @endif
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::routeIs('scanner.index') ? 'active' : '' }}" href="{{ route('scanner.index') }}">
+                                <i class="fas fa-barcode"></i> สแกนบาร์โค้ด
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <h6 class="sidebar-heading">
                                 <span>การจัดการใบขอเบิก</span>

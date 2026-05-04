@@ -68,6 +68,7 @@
             </div>
         </div>
         <div class="card-footer text-end">
+            <a href="{{ route('products.barcode', $product->id) }}" class="btn btn-info me-2"><i class="fas fa-barcode me-2"></i> พิมพ์บาร์โค้ด</a>
             <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning me-2"><i class="fas fa-edit me-2"></i> แก้ไข</a>
             <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="d-inline" onsubmit="return confirm('คุณแน่ใจหรือไม่ที่จะลบสินค้านี้?');">
                 @csrf

@@ -9,6 +9,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BatchController;
+use App\Http\Controllers\ScannerController;
 use App\Http\Controllers\StockTransactionController;
 use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\UserController;
@@ -61,9 +62,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Routes สำหรับ Master Data: Products
     Route::resource('products', ProductController::class);
+    Route::get('/products/{product}/barcode', [ProductController::class, 'barcode'])->name('products.barcode');
 
     // Routes สำหรับ Batches
     Route::resource('batches', BatchController::class);
+    Route::get('/batches/{batch}/barcode', [BatchController::class, 'barcode'])->name('batches.barcode');
 
     // Routes สำหรับ Stock Transactions
     Route::get('/stock-transactions', [StockTransactionController::class, 'index'])->name('stock_transactions.index');
@@ -73,6 +76,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/stock-transactions/issue', [StockTransactionController::class, 'storeIssue'])->name('stock_transactions.issue.store');
     Route::get('/stock-transactions/adjust', [StockTransactionController::class, 'createAdjust'])->name('stock_transactions.adjust.create');
     Route::post('/stock-transactions/adjust', [StockTransactionController::class, 'storeAdjust'])->name('stock_transactions.adjust.store');
+
+    // Scanner routes
+    Route::get('/scanner', [ScannerController::class, 'index'])->name('scanner.index');
+    Route::post('/scan', [ScannerController::class, 'scan'])->name('scanner.scan');
 
     // Routes สำหรับ Requisitions
     Route::resource('requisitions', RequisitionController::class);

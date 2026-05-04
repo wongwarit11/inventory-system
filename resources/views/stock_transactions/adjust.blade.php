@@ -31,12 +31,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="product_id" class="form-label fw-bold">
-                                    สินค้า <span class="text-danger">*</span>
-                                    <i class="fas fa-info-circle custom-tooltip-icon ms-1"
-                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                        title="เลือกสินค้าทึ่ต้องการ, (จำเป็น)"></i>
-                                </label>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="product_id" class="form-label fw-bold mb-0">
+                                        สินค้า <span class="text-danger">*</span>
+                                    </label>
+                                    <button type="button" id="scannerToggleBtn" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                        <i class="fas fa-qrcode me-1"></i> สแกนบาร์โค้ด
+                                    </button>
+                                </div>
+                                <label class="form-text text-muted mb-2">กดปุ่มเพื่อสแกนบาร์โค้ดสินค้าและเลือกสินค้านั้นโดยอัตโนมัติ</label>
                                 <select class="form-select form-select-lg rounded-pill @error('product_id') is-invalid @enderror" id="product_id" name="product_id" required>
                                     <option value="">-- เลือกสินค้า --</option>
                                     @foreach ($products as $product)
@@ -67,6 +70,18 @@
                                     {{-- แสดงจำนวนคงเหลือของล็อตที่เลือก --}}
                                 </small>
                             </div>
+                        </div>
+                    </div>
+                    <div id="scanner_widget" class="mb-4" style="display:none;">
+                        <div class="card border-info rounded-4 shadow-sm p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="mb-1">สแกนบาร์โค้ด</h6>
+                                    <p class="text-muted mb-0">สแกนรหัสสินค้าเพื่อนำข้อมูลไปเติมในฟอร์มอัตโนมัติ</p>
+                                </div>
+                                <span id="scannerStatus" class="badge bg-secondary">พร้อมสแกน</span>
+                            </div>
+                            <div id="scannerHolder" style="min-height:260px; width:100%;"></div>
                         </div>
                     </div>
 
@@ -143,6 +158,7 @@
             </div>
         </div>
     </div>
+    <script src="https://unpkg.com/html5-qrcode@2.3.12/minified/html5-qrcode.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const productIdSelect = document.getElementById('product_id');
@@ -209,10 +225,16 @@
             }
 
             // Initial setup on page load
-            updateUnitDisplay();
             const oldProductId = "{{ old('product_id') }}";
-            if (oldProductId) {
-                loadBatchesForProduct(oldProductId);
+            const queryProductId = "{{ request()->query('product_id', '') }}";
+            const queryBatchId = "{{ request()->query('batch_id', '') }}";
+
+            if (queryProductId && !oldProductId) {
+                productIdSelect.value = queryProductId;
+                updateUnitDisplay();
+                loadBatchesForProduct(queryProductId, queryBatchId || null);
+            } else if (oldProductId) {
+                loadBatchesForProduct(oldProductId, queryBatchId || null);
             }
 
             // Event Listeners
@@ -222,6 +244,100 @@
             });
 
             batchIdSelect.addEventListener('change', updateBatchQuantityDisplay);
+
+            const scannerToggleBtn = document.getElementById('scannerToggleBtn');
+            const scannerWidget = document.getElementById('scanner_widget');
+            const scannerHolder = document.getElementById('scannerHolder');
+            const scannerStatus = document.getElementById('scannerStatus');
+            let html5QrCode = null;
+            let scanning = false;
+
+            function setScannerStatus(message, isError = false) {
+                scannerStatus.textContent = message;
+                scannerStatus.classList.toggle('bg-danger', isError);
+                scannerStatus.classList.toggle('bg-secondary', !isError);
+                scannerStatus.classList.toggle('bg-warning', !isError && message === 'กำลังสแกน...');
+                scannerStatus.classList.toggle('bg-success', !isError && message !== 'กำลังสแกน...');
+            }
+
+            function showScanner() {
+                scannerWidget.style.display = 'block';
+                if (!html5QrCode) {
+                    html5QrCode = new Html5Qrcode('scannerHolder');
+                }
+                html5QrCode.start(
+                    { facingMode: 'environment' },
+                    { fps: 10, qrbox: { width: 300, height: 200 } },
+                    decodedText => {
+                        if (scanning) {
+                            scanning = false;
+                            html5QrCode.stop().then(() => {
+                                scannerToggleBtn.textContent = 'สแกนบาร์โค้ด';
+                                handleBarcode(decodedText);
+                            }).catch(() => {
+                                scannerToggleBtn.textContent = 'สแกนบาร์โค้ด';
+                            });
+                        }
+                    },
+                    errorMessage => {
+                        setScannerStatus('กำลังสแกน...');
+                    }
+                ).then(() => {
+                    scanning = true;
+                    scannerToggleBtn.textContent = 'หยุดสแกน';
+                    setScannerStatus('กำลังสแกน...');
+                }).catch(error => {
+                    setScannerStatus('ไม่สามารถเปิดกล้องได้', true);
+                    console.error(error);
+                });
+            }
+
+            function hideScanner() {
+                if (html5QrCode && scanning) {
+                    html5QrCode.stop().then(() => {
+                        scanning = false;
+                        scannerToggleBtn.textContent = 'สแกนบาร์โค้ด';
+                        setScannerStatus('หยุดสแกนแล้ว');
+                    }).catch(() => {
+                        setScannerStatus('ไม่สามารถหยุดกล้องได้', true);
+                    });
+                }
+            }
+
+            function handleBarcode(decodedText) {
+                setScannerStatus('พบบาร์โค้ด: ' + decodedText);
+                fetch('{{ route('scanner.scan') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ barcode: decodedText })
+                })
+                .then(response => response.json().then(body => ({ status: response.status, body })))
+                .then(result => {
+                    if (result.status === 200) {
+                        const data = result.body;
+                        const productId = data.product_id || data.id;
+                        productIdSelect.value = productId;
+                        updateUnitDisplay();
+                        loadBatchesForProduct(productId, data.batch_id ? data.batch_id.toString() : null);
+                    } else {
+                        setScannerStatus(result.body.message || 'ไม่พบบาร์โค้ดนี้ในระบบ', true);
+                    }
+                })
+                .catch(() => {
+                    setScannerStatus('เกิดข้อผิดพลาดในการสแกน', true);
+                });
+            }
+
+            scannerToggleBtn.addEventListener('click', function () {
+                if (scanning) {
+                    hideScanner();
+                } else {
+                    showScanner();
+                }
+            });
         });
     </script>
 @endsection

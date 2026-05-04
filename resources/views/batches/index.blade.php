@@ -61,6 +61,12 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
+                                    <a href="{{ route('batches.barcode', $batch->id) }}" class="btn btn-info btn-sm me-1 rounded-pill" title="พิมพ์บาร์โค้ด">
+                                        <i class="fas fa-barcode"></i> บาร์โค้ด
+                                    </a>
+                                    <a href="{{ route('batches.show', $batch->id) }}" class="btn btn-secondary btn-sm me-1 rounded-pill" title="ดูรายละเอียด">
+                                        <i class="fas fa-eye"></i> ดู
+                                    </a>
                                     <a href="{{ route('batches.edit', $batch->id) }}" class="btn btn-warning btn-sm me-1 rounded-pill" title="แก้ไข">
                                         <i class="fas fa-edit"></i> แก้ไข
                                     </a>

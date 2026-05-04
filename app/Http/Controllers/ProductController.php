@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log; // เพิ่มการ import Log facade
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class ProductController extends Controller
 {
@@ -136,6 +137,26 @@ class ProductController extends Controller
             return $response;
         }
         return view('products.show', compact('product'));
+    }
+
+    /**
+     * Show the barcode label for the specified product.
+     */
+    public function barcode(Product $product)
+    {
+        if ($response = $this->authorizeStaffAccess()) {
+            return $response;
+        }
+
+        $generator = new BarcodeGeneratorPNG();
+        $barcodeData = $generator->getBarcode($product->product_code, $generator::TYPE_CODE_128, 2, 60);
+        $barcode = 'data:image/png;base64,' . base64_encode($barcodeData);
+
+        return view('barcodes.label', [
+            'type' => 'product',
+            'product' => $product,
+            'barcode' => $barcode,
+        ]);
     }
 
     /**

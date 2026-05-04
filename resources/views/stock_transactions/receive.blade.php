@@ -36,12 +36,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="product_id" class="form-label fw-bold">
-                                    สินค้า <span class="text-danger">*</span>
-                                    <i class="fas fa-info-circle custom-tooltip-icon ms-1"
-                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                        title="เลือกรายการสินค้ารับเข้า"></i>
-                                </label>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="product_id" class="form-label fw-bold mb-0">
+                                        สินค้า <span class="text-danger">*</span>
+                                    </label>
+                                    <button type="button" id="scannerToggleBtn" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                        <i class="fas fa-qrcode me-1"></i> สแกนบาร์โค้ด
+                                    </button>
+                                </div>
+                                <label class="form-text text-muted mb-2">กดปุ่มเพื่อสแกนบาร์โค้ดสินค้าและเลือกสินค้านั้นโดยอัตโนมัติ</label>
                                 <select class="form-select form-select-lg rounded-pill @error('product_id') is-invalid @enderror" id="product_id" name="product_id" required>
                                     <option value="">-- เลือกสินค้า --</option>
                                     @foreach ($products as $product)
@@ -74,6 +77,18 @@
                     </div>
 
                     {{-- ส่วนสำหรับเลือกล็อตสินค้าที่มีอยู่ --}}
+                    <div id="scanner_widget" class="mb-4" style="display:none;">
+                        <div class="card border-info rounded-4 shadow-sm p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="mb-1">สแกนบาร์โค้ด</h6>
+                                    <p class="text-muted mb-0">ใช้กล้องเพื่อค้นหาสินค้าและล็อตโดยอัตโนมัติ</p>
+                                </div>
+                                <span id="scannerStatus" class="badge bg-secondary">พร้อมสแกน</span>
+                            </div>
+                            <div id="scannerHolder" style="min-height:260px; width:100%;"></div>
+                        </div>
+                    </div>
                     <div id="existing_batch_fields" style="display: {{ old('batch_selection_type') == 'existing' ? 'block' : 'none' }};">
                         <div class="mb-3">
                             <label for="batch_id" class="form-label fw-bold">
@@ -211,6 +226,7 @@
             </div>
         </div>
     </div>
+        <script src="https://unpkg.com/html5-qrcode@2.3.12/minified/html5-qrcode.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const productIdSelect = document.getElementById('product_id');
@@ -253,7 +269,7 @@
                 }
 
                 // Function to load batches via AJAX
-                function loadBatchesForProduct(productId) {
+                function loadBatchesForProduct(productId, selectedBatchId = null) {
                     batchIdSelect.innerHTML = '<option value="">กำลังโหลด...</option>'; // Loading indicator
                     if (productId) {
                         fetch(`/api/products/${productId}/batches`)
@@ -264,8 +280,10 @@
                                     const option = document.createElement('option');
                                     option.value = batch.id;
                                     option.textContent = `${batch.batch_number} (คงเหลือ: ${batch.quantity})`;
-                                    // Retain old selected value after validation error
-                                    if (oldBatchId === batch.id.toString()) {
+                                    if (selectedBatchId && selectedBatchId === batch.id.toString()) {
+                                        option.selected = true;
+                                    }
+                                    if (!selectedBatchId && oldBatchId === batch.id.toString()) {
                                         option.selected = true;
                                     }
                                     batchIdSelect.appendChild(option);
@@ -280,23 +298,141 @@
                     }
                 }
 
+                function setScannerStatus(message, isError = false) {
+                    const scannerStatus = document.getElementById('scannerStatus');
+                    scannerStatus.textContent = message;
+                    scannerStatus.classList.toggle('bg-danger', isError);
+                    scannerStatus.classList.toggle('bg-secondary', !isError);
+                    scannerStatus.classList.toggle('bg-warning', !isError && message === 'กำลังสแกน...');
+                    scannerStatus.classList.toggle('bg-success', !isError && message !== 'กำลังสแกน...');
+                }
+
+                function clearScanner() {
+                    const scannerWidget = document.getElementById('scanner_widget');
+                    scannerWidget.style.display = 'none';
+                    if (html5QrCode && scanning) {
+                        html5QrCode.stop().catch(() => {});
+                    }
+                    scanning = false;
+                    toggleScannerBtn.textContent = 'สแกนบาร์โค้ด';
+                }
+
+                function fillProductFromScan(data) {
+                    const productId = data.product_id || data.id;
+                    if (!productId) {
+                        return;
+                    }
+                    productIdSelect.value = productId;
+                    updateUnitDisplay();
+                    batchSelectionTypeSelect.value = 'existing';
+                    toggleBatchFields();
+                    loadBatchesForProduct(productId, data.batch_id ? data.batch_id.toString() : null);
+                }
+
+                function handleBarcodeScan(decodedText) {
+                    setScannerStatus('พบบาร์โค้ด: ' + decodedText);
+                    fetch('{{ route('scanner.scan') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ barcode: decodedText })
+                    })
+                    .then(response => response.json().then(body => ({ status: response.status, body })))
+                    .then(result => {
+                        if (result.status === 200) {
+                            fillProductFromScan(result.body);
+                        } else {
+                            setScannerStatus(result.body.message || 'ไม่พบบาร์โค้ดนี้ในระบบ', true);
+                        }
+                    })
+                    .catch(() => {
+                        setScannerStatus('เกิดข้อผิดพลาดขณะสแกน', true);
+                    });
+                }
+
+                const scannerToggleBtn = document.getElementById('scannerToggleBtn');
+                const scannerWidget = document.getElementById('scanner_widget');
+                const scannerHolder = document.getElementById('scannerHolder');
+                let html5QrCode = null;
+                let scanning = false;
+
+                function startScanner() {
+                    scannerWidget.style.display = 'block';
+                    if (!html5QrCode) {
+                        html5QrCode = new Html5Qrcode('scannerHolder');
+                    }
+                    html5QrCode.start(
+                        { facingMode: 'environment' },
+                        { fps: 10, qrbox: { width: 300, height: 200 } },
+                        decodedText => {
+                            if (scanning) {
+                                scanning = false;
+                                html5QrCode.stop().then(() => {
+                                    scannerToggleBtn.textContent = 'สแกนบาร์โค้ด';
+                                    handleBarcodeScan(decodedText);
+                                }).catch(() => {
+                                    scannerToggleBtn.textContent = 'สแกนบาร์โค้ด';
+                                });
+                            }
+                        },
+                        errorMessage => {
+                            setScannerStatus('กำลังสแกน...');
+                        }
+                    ).then(() => {
+                        scanning = true;
+                        scannerToggleBtn.textContent = 'หยุดสแกน';
+                        setScannerStatus('กำลังสแกน...');
+                    }).catch(error => {
+                        setScannerStatus('ไม่สามารถเปิดกล้องได้', true);
+                        console.error(error);
+                    });
+                }
+
+                function stopScanner() {
+                    if (html5QrCode && scanning) {
+                        html5QrCode.stop().then(() => {
+                            scanning = false;
+                            scannerToggleBtn.textContent = 'สแกนบาร์โค้ด';
+                            setScannerStatus('หยุดสแกนแล้ว');
+                        }).catch(() => {
+                            setScannerStatus('ไม่สามารถหยุดกล้องได้', true);
+                        });
+                    }
+                }
+
+                scannerToggleBtn.addEventListener('click', function () {
+                    if (scanning) {
+                        stopScanner();
+                    } else {
+                        startScanner();
+                    }
+                });
+
                 // Initial setup on page load
                 updateUnitDisplay();
                 toggleBatchFields();
 
-                // Load batches if product_id and batch_selection_type are 'existing' on old() value
                 const oldProductId = "{{ old('product_id') }}";
                 const oldBatchSelectionType = "{{ old('batch_selection_type') }}";
                 const oldBatchId = "{{ old('batch_id') }}";
+                const queryProductId = "{{ request()->query('product_id', '') }}";
+                const queryBatchId = "{{ request()->query('batch_id', '') }}";
 
-                if (oldProductId && oldBatchSelectionType === 'existing') {
-                    loadBatchesForProduct(oldProductId);
+                if (queryProductId && !oldProductId) {
+                    productIdSelect.value = queryProductId;
+                    updateUnitDisplay();
+                    batchSelectionTypeSelect.value = 'existing';
+                    toggleBatchFields();
+                    loadBatchesForProduct(queryProductId, queryBatchId || null);
+                } else if (oldProductId && oldBatchSelectionType === 'existing') {
+                    loadBatchesForProduct(oldProductId, oldBatchId || queryBatchId || null);
                 }
 
                 // Event Listeners
                 productIdSelect.addEventListener('change', function() {
                     updateUnitDisplay();
-                    // Reset batch selection type and fields when product changes
                     batchSelectionTypeSelect.value = '';
                     toggleBatchFields();
                 });
@@ -306,7 +442,7 @@
                     const selectedType = this.value;
                     const productId = productIdSelect.value;
                     if (selectedType === 'existing' && productId) {
-                        loadBatchesForProduct(productId);
+                        loadBatchesForProduct(productId, queryBatchId || null);
                     }
                 });
             });

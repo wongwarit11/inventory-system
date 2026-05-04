@@ -56,6 +56,9 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
+                                    <a href="{{ route('products.barcode', $product->id) }}" class="btn btn-info btn-sm me-1 rounded-pill" title="พิมพ์บาร์โค้ด">
+                                        <i class="fas fa-barcode"></i> บาร์โค้ด
+                                    </a>
                                     <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning btn-sm me-1 rounded-pill" title="แก้ไข">
                                         <i class="fas fa-edit"></i> แก้ไข
                                     </a>
@@ -70,7 +73,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="12" class="text-center py-4">ไม่พบข้อมูลสินค้า</td> {{-- อัปเดต colspan เป็น 12 --}}
+                                <td colspan="13" class="text-center py-4">ไม่พบข้อมูลสินค้า</td>
                             </tr>
                         @endforelse
                     </tbody>

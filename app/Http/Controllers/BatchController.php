@@ -7,6 +7,7 @@ use App\Models\Product; // Import Product Model
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth; // Import Auth Facade
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use Carbon\Carbon; // Import Carbon for date handling
 
 class BatchController extends Controller
@@ -88,6 +89,26 @@ class BatchController extends Controller
             return $response;
         }
         return view('batches.show', compact('batch'));
+    }
+
+    /**
+     * Show the barcode label for the specified batch.
+     */
+    public function barcode(Batch $batch)
+    {
+        if ($response = $this->authorizeStaffAccess()) {
+            return $response;
+        }
+
+        $generator = new BarcodeGeneratorPNG();
+        $barcodeData = $generator->getBarcode($batch->batch_number, $generator::TYPE_CODE_128, 2, 60);
+        $barcode = 'data:image/png;base64,' . base64_encode($barcodeData);
+
+        return view('barcodes.label', [
+            'type' => 'batch',
+            'batch' => $batch,
+            'barcode' => $barcode,
+        ]);
     }
 
     /**
