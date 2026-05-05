@@ -12,8 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf; // เพิ่ม Carbon
+use Carbon\Carbon; // เพิ่ม Carbon
 
 class RequisitionController extends Controller
 {
@@ -385,22 +384,69 @@ class RequisitionController extends Controller
         }
     }
 
-    /**
-     * Generate PDF for printing requisition form
-     * สร้าง PDF สำหรับพิมพ์ใบขอเบิก
-     */
-    public function printPdf(Requisition $requisition)
+    public function searchProduct(Request $request)
     {
-        // โหลดความสัมพันธ์ที่จำเป็น
-        $requisition->load(['user', 'department', 'items.product']);
+        $q = $request->q;
 
-        // สร้าง PDF โดยใช้ DomPDF
-        $pdf = Pdf::loadView('requisitions.pdf', compact('requisition'));
+        $products = \App\Models\Product::with('batches')
+            ->where(function($q2) use ($q) {
+                $q2->where('name', 'like', "%{$q}%")
+                ->orWhere('product_code', 'like', "%{$q}%");
+            })
+            ->limit(10)
+            ->get();
 
-        // ตั้งค่าการแสดงผล PDF
-        $pdf->setPaper('a4', 'portrait');
+        $data = $products->map(function ($p) {
+            $stock = $p->batches->sum('quantity');
 
-        // ส่งไฟล์ PDF กลับไปให้ผู้ใช้ดาวน์โหลด
-        return $pdf->download('requisition_' . $requisition->requisition_number . '.pdf');
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'product_code' => $p->product_code,
+                'stock' => $stock
+            ];
+        });
+
+        return response()->json($data);
     }
+
+    /**
+     * Generate a product row (AJAX used when adding new product row)
+     * สร้างแถวรายการสินค้าแบบ Ajax ตอนกดปุ่ม "เพิ่มรายการ"
+     */
+public function productRow(Request $request)
+{
+    $request->validate([
+        'index' => 'required|integer',
+    ]);
+
+    $product = null;
+    $batches = collect();
+    $totalStock = 0;
+
+    if ($request->product_id) {
+        $product = Product::find($request->product_id);
+
+        // ดึง batch ทั้งหมด
+        $batches = DB::table('batches')
+            ->where('product_id', $product->id)
+            ->get();
+
+        // รวมจำนวนคงเหลือจริง
+        $totalStock = $batches->sum(function ($b) {
+            return $b->current_quantity ?? $b->quantity ?? 0;
+        });
+    }
+
+    return response()->json([
+        'success' => true,
+        'html' => view('requisitions.partials.product_row', [
+            'index' => $request->index,
+            'product' => $product,
+            'batches' => $batches,
+            'totalStock' => $totalStock
+        ])->render()
+    ]);
+}
+
 }

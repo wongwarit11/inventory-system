@@ -89,6 +89,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('requisitions', RequisitionController::class);
     // Route สำหรับดำเนินการเบิกสินค้า
     Route::post('/requisitions/{requisition}/process', [RequisitionController::class, 'processRequisition'])->name('requisitions.process');
+    // Route สำหรับพิมพ์ใบขอเบิกเป็น PDF
+    Route::get('/requisitions/{requisition}/print-pdf', [RequisitionController::class, 'printPdf'])->name('requisitions.print_pdf');
 
     // Routes สำหรับ Users
     Route::resource('users', UserController::class);
