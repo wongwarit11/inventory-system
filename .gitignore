@@ -22,3 +22,8 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+backup.sql 
+patients.db 
+public/phpinfo.php 
+storage/fonts/*.ufm 
+storage/fonts/*.json 
