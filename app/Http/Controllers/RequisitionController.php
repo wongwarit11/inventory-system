@@ -12,7 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Carbon\Carbon; // เพิ่ม Carbon
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf; // เพิ่ม Carbon
 
 class RequisitionController extends Controller
 {
@@ -382,5 +383,24 @@ class RequisitionController extends Controller
             DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'เกิดข้อผิดพลาดในการดำเนินการเบิกสินค้า: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Generate PDF for printing requisition form
+     * สร้าง PDF สำหรับพิมพ์ใบขอเบิก
+     */
+    public function printPdf(Requisition $requisition)
+    {
+        // โหลดความสัมพันธ์ที่จำเป็น
+        $requisition->load(['user', 'department', 'items.product']);
+
+        // สร้าง PDF โดยใช้ DomPDF
+        $pdf = Pdf::loadView('requisitions.pdf', compact('requisition'));
+
+        // ตั้งค่าการแสดงผล PDF
+        $pdf->setPaper('a4', 'portrait');
+
+        // ส่งไฟล์ PDF กลับไปให้ผู้ใช้ดาวน์โหลด
+        return $pdf->download('requisition_' . $requisition->requisition_number . '.pdf');
     }
 }
