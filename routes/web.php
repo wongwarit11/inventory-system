@@ -7,6 +7,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ManufacturerController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\ScannerController;
@@ -56,6 +57,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Routes สำหรับ Master Data: Manufacturers
     Route::resource('manufacturers', ManufacturerController::class);
+
+    // Routes สำหรับ Master Data: Locations
+    Route::resource('locations', LocationController::class);
 
     // Routes สำหรับ Master Data: Product Types
     Route::resource('product-types', ProductTypeController::class); // <-- ตรวจสอบว่ามีบรรทัดนี้

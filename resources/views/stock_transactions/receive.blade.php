@@ -126,14 +126,14 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="production_date" class="form-label fw-bold">
+                                    <label for="manufacture_date" class="form-label fw-bold">
                                         วันที่ผลิต
                                         <i class="fas fa-info-circle custom-tooltip-icon ms-1"
                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                         title="ระบุวันที่ผลิตสินค้าทุกครั้ง(ถ้ามี)"></i>
                                     </label>
-                                    <input type="date" class="form-control rounded-pill @error('production_date') is-invalid @enderror" id="production_date" name="production_date" value="{{ old('production_date') }}">
-                                    @error('production_date')
+                                    <input type="date" class="form-control rounded-pill @error('manufacture_date') is-invalid @enderror" id="manufacture_date" name="manufacture_date" value="{{ old('manufacture_date') }}">
+                                    @error('manufacture_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -251,7 +251,7 @@
                         newBatchFields.style.display = 'none';
                         // Clear new batch fields if they were previously visible
                         document.getElementById('new_batch_number').value = '';
-                        document.getElementById('production_date').value = '';
+                        document.getElementById('manufacture_date').value = '';
                         document.getElementById('expiration_date').value = '';
                     } else if (selectedType === 'new') {
                         existingBatchFields.style.display = 'none';
@@ -263,7 +263,7 @@
                         newBatchFields.style.display = 'none';
                         batchIdSelect.innerHTML = '<option value="">-- เลือกล็อตสินค้า --</option>';
                         document.getElementById('new_batch_number').value = '';
-                        document.getElementById('production_date').value = '';
+                        document.getElementById('manufacture_date').value = '';
                         document.getElementById('expiration_date').value = '';
                     }
                 }

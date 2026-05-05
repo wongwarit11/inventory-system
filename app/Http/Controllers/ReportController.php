@@ -30,7 +30,7 @@ class ReportController extends Controller
             return $response;
         }
 
-        $batches = Batch::with('product')
+        $batches = Batch::with(['product', 'location'])
                         ->whereHas('product', function($query) {
                             $query->where('status', 'active');
                         })

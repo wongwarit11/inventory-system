@@ -300,6 +300,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ Request::routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}">
+                                <i class="fas fa-map-marker-alt"></i> ตำแหน่งสินค้า
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ Request::routeIs('product-types.*') ? 'active' : '' }}" href="{{ route('product-types.index') }}">
                                 <i class="fas fa-boxes"></i> ประเภทสินค้า (Product Types)
                             </a>
@@ -439,6 +444,11 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::routeIs('manufacturers.*') ? 'active' : '' }}" href="{{ route('manufacturers.index') }}">
                                     <i class="fas fa-industry"></i> ผู้ผลิต (Manufacturers)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}">
+                                    <i class="fas fa-map-marker-alt"></i> ตำแหน่งสินค้า
                                 </a>
                             </li>
                             <li class="nav-item">

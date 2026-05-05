@@ -23,6 +23,7 @@
                             <th>รหัสสินค้า</th>
                             <th>ชื่อสินค้า</th>
                             <th>ล็อตสินค้า</th>
+                            <th>ตำแหน่ง</th>
                             <th>วันหมดอายุ</th>
                             <th>ราคาต้นทุน (ต่อหน่วย)</th>
                             <th>จุดต่ำสุดที่ต้องสั่งซื้อ</th>
@@ -37,6 +38,13 @@
                                 <td>{{ $batch->product->product_code ?? '-' }}</td>
                                 <td>{{ $batch->product->name ?? '-' }}</td>
                                 <td>{{ $batch->batch_number ?? '-' }}</td>
+                                <td>
+                                    @if ($batch->location)
+                                        {{ $batch->location->full_location }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td>
                                     @if ($batch->expiration_date)
                                         @php
@@ -79,7 +87,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center">ไม่พบข้อมูลสต็อก</td>
+                                <td colspan="10" class="text-center">ไม่พบข้อมูลสต็อก</td>
                             </tr>
                         @endforelse
                     </tbody>

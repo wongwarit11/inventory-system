@@ -60,7 +60,19 @@ class StockTransactionController extends Controller
 
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'batch_id' => 'nullable|exists:batches,id',
+            'batch_id' => [
+                'nullable',
+                'exists:batches,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    // If batch is provided, verify it belongs to the selected product
+                    if ($value) {
+                        $batch = Batch::find($value);
+                        if ($batch && $batch->product_id != $request->product_id) {
+                            $fail('ล็อตสินค้าที่เลือกไม่ถูกต้อง หรือไม่ตรงกับสินค้าที่ระบุ');
+                        }
+                    }
+                },
+            ],
             'quantity' => 'required|integer|min:1',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string|max:500', // ใช้ notes แทน remark
@@ -135,7 +147,17 @@ class StockTransactionController extends Controller
 
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'batch_id' => 'required|exists:batches,id',
+            'batch_id' => [
+                'required',
+                'exists:batches,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Verify batch belongs to the selected product
+                    $batch = Batch::find($value);
+                    if ($batch && $batch->product_id != $request->product_id) {
+                        $fail('ล็อตสินค้าที่เลือกไม่ถูกต้อง หรือไม่ตรงกับสินค้าที่ระบุ');
+                    }
+                },
+            ],
             'quantity' => 'required|integer|min:1',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string|max:500', // ใช้ notes แทน remark
@@ -217,7 +239,17 @@ class StockTransactionController extends Controller
 
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'batch_id' => 'required|exists:batches,id',
+            'batch_id' => [
+                'required',
+                'exists:batches,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Verify batch belongs to the selected product
+                    $batch = Batch::find($value);
+                    if ($batch && $batch->product_id != $request->product_id) {
+                        $fail('ล็อตสินค้าที่เลือกไม่ถูกต้อง หรือไม่ตรงกับสินค้าที่ระบุ');
+                    }
+                },
+            ],
             'quantity' => 'required|integer',
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string|max:500', // ใช้ notes แทน remark

@@ -13,15 +13,21 @@ class Batch extends Model
         'product_id',
         'batch_number',
         'quantity',
-        'production_date',
         'expiration_date',
         'status',
+        'location_id',
     ];
 
     // ความสัมพันธ์กับ Product
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    // ความสัมพันธ์กับ Location
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
     }
 
     // ความสัมพันธ์กับ StockTransaction (ล็อตสินค้า 1 ล็อตมีได้หลายรายการสต็อก)
