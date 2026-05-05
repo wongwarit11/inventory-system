@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Batch;
 use App\Models\Product; // Import Product Model
+use App\Models\Location; // Import Location Model
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth; // Import Auth Facade
@@ -44,7 +45,8 @@ class BatchController extends Controller
             return $response;
         }
         $products = Product::where('status', 'active')->orderBy('name')->get();
-        return view('batches.create', compact('products'));
+        $locations = Location::where('is_active', true)->orderBy('zone')->get();
+        return view('batches.create', compact('products', 'locations'));
     }
 
     /**
@@ -60,9 +62,9 @@ class BatchController extends Controller
             'product_id' => 'required|exists:products,id',
             'batch_number' => 'required|string|max:255|unique:batches,batch_number',
             'quantity' => 'required|integer|min:0',
-            'production_date' => 'nullable|date',
-            'expiration_date' => 'nullable|date|after_or_equal:production_date',
+            'expiration_date' => 'nullable|date',
             'status' => 'required|in:active,inactive',
+            'location_id' => 'nullable|exists:locations,id',
         ], [
             'product_id.required' => 'กรุณาเลือกสินค้า',
             'product_id.exists' => 'สินค้าไม่ถูกต้อง',
@@ -71,9 +73,10 @@ class BatchController extends Controller
             'quantity.required' => 'กรุณากรอกจำนวน',
             'quantity.integer' => 'จำนวนต้องเป็นตัวเลขจำนวนเต็ม',
             'quantity.min' => 'จำนวนต้องไม่น้อยกว่า 0',
-            'expiration_date.after_or_equal' => 'วันหมดอายุต้องไม่ก่อนวันผลิต',
+
             'status.required' => 'กรุณาเลือกสถานะ',
             'status.in' => 'สถานะไม่ถูกต้อง',
+            'location_id.exists' => 'ตำแหน่งเก็บสินค้าไม่ถูกต้อง',
         ]);
 
         Batch::create($request->all());
@@ -120,7 +123,8 @@ class BatchController extends Controller
             return $response;
         }
         $products = Product::where('status', 'active')->orderBy('name')->get();
-        return view('batches.edit', compact('batch', 'products'));
+        $locations = Location::where('is_active', true)->orderBy('zone')->get();
+        return view('batches.edit', compact('batch', 'products', 'locations'));
     }
 
     /**
@@ -136,9 +140,9 @@ class BatchController extends Controller
             'product_id' => 'required|exists:products,id',
             'batch_number' => ['required', 'string', 'max:255', Rule::unique('batches')->ignore($batch->id)],
             'quantity' => 'required|integer|min:0',
-            'production_date' => 'nullable|date',
-            'expiration_date' => 'nullable|date|after_or_equal:production_date',
+            'expiration_date' => 'nullable|date',
             'status' => 'required|in:active,inactive',
+            'location_id' => 'nullable|exists:locations,id',
         ], [
             'product_id.required' => 'กรุณาเลือกสินค้า',
             'product_id.exists' => 'สินค้าไม่ถูกต้อง',
@@ -147,9 +151,9 @@ class BatchController extends Controller
             'quantity.required' => 'กรุณากรอกจำนวน',
             'quantity.integer' => 'จำนวนต้องเป็นตัวเลขจำนวนเต็ม',
             'quantity.min' => 'จำนวนต้องไม่น้อยกว่า 0',
-            'expiration_date.after_or_equal' => 'วันหมดอายุต้องไม่ก่อนวันผลิต',
             'status.required' => 'กรุณาเลือกสถานะ',
             'status.in' => 'สถานะไม่ถูกต้อง',
+            'location_id.exists' => 'ตำแหน่งเก็บสินค้าไม่ถูกต้อง',
         ]);
 
         $batch->update($request->all());

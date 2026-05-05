@@ -63,16 +63,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="production_date" class="form-label fw-bold">วันที่ผลิต</label>
-                            <input type="date" class="form-control rounded-pill @error('production_date') is-invalid @enderror" id="production_date" name="production_date" value="{{ old('production_date') }}">
-                            @error('production_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="expiration_date" class="form-label fw-bold">วันหมดอายุ</label>
                             <input type="date" class="form-control rounded-pill @error('expiration_date') is-invalid @enderror" id="expiration_date" name="expiration_date" value="{{ old('expiration_date') }}">
@@ -90,6 +81,21 @@
                         <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>ไม่ใช้งาน</option>
                     </select>
                     @error('status')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="location_id" class="form-label fw-bold">ตำแหน่งเก็บสินค้า</label>
+                    <select class="form-select form-select-lg rounded-pill @error('location_id') is-invalid @enderror" id="location_id" name="location_id">
+                        <option value="">-- เลือกตำแหน่ง --</option>
+                        @foreach ($locations as $location)
+                            <option value="{{ $location->id }}" {{ old('location_id') == $location->id ? 'selected' : '' }}>
+                                {{ $location->full_location }} (โซน {{ $location->zone }} - ชั้น {{ $location->shelf }} - ช่อง {{ $location->slot }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('location_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

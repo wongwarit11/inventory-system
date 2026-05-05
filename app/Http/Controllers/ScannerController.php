@@ -28,9 +28,12 @@ class ScannerController extends Controller
 
         $barcode = trim($request->input('barcode'));
 
-        $product = Product::with('batches')->where('product_code', $barcode)->first();
+        $product = Product::with(['batches.location'])->where('product_code', $barcode)->first();
         if ($product) {
             $stock = $product->batches->sum('quantity');
+            $locations = $product->batches->pluck('location.full_location')->filter()->unique()->values();
+            $locationText = $locations->count() ? $locations->implode(', ') : 'ยังไม่กำหนด';
+
             return response()->json([
                 'type' => 'product',
                 'id' => $product->id,
@@ -38,14 +41,15 @@ class ScannerController extends Controller
                 'name' => $product->name,
                 'unit' => $product->unit,
                 'stock' => $stock,
-                'location' => 'คลังสินค้าหลัก',
+                'location' => $locationText,
                 'batch_id' => null,
                 'batch_number' => null,
             ]);
         }
 
-        $batch = Batch::with('product')->where('batch_number', $barcode)->first();
+        $batch = Batch::with('product', 'location')->where('batch_number', $barcode)->first();
         if ($batch) {
+            $location = $batch->location ? "{$batch->location->full_location}" : 'ยังไม่กำหนด';
             return response()->json([
                 'type' => 'batch',
                 'id' => $batch->id,
@@ -54,7 +58,7 @@ class ScannerController extends Controller
                 'product_id' => $batch->product_id,
                 'product_code' => $batch->product->product_code ?? null,
                 'stock' => $batch->quantity,
-                'location' => 'คลังสินค้าหลัก',
+                'location' => $location,
                 'batch_id' => $batch->id,
                 'batch_number' => $batch->batch_number,
             ]);

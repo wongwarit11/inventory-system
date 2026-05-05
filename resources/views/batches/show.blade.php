@@ -20,11 +20,21 @@
                 <dt class="col-sm-4">รหัสล็อตออนไลน์:</dt>
                 <dd class="col-sm-8">{{ $batch->batch_number }}</dd>
 
+                <dt class="col-sm-4">ตำแหน่งเก็บ:</dt>
+                <dd class="col-sm-8">
+                    @if ($batch->location)
+                        <strong>{{ $batch->location->full_location }}</strong><br>
+                        <small class="text-muted">โซน {{ $batch->location->zone }} - ชั้น {{ $batch->location->shelf }} - ช่อง {{ $batch->location->slot }}</small>
+                    @else
+                        <span class="text-muted">ยังไม่กำหนด</span>
+                    @endif
+                </dd>
+
                 <dt class="col-sm-4">จำนวน:</dt>
                 <dd class="col-sm-8">{{ number_format($batch->quantity) }} {{ $batch->product->unit ?? '' }}</dd>
 
                 <dt class="col-sm-4">วันผลิต:</dt>
-                <dd class="col-sm-8">{{ $batch->production_date ? \Carbon\Carbon::parse($batch->production_date)->format('d/m/Y') : '-' }}</dd>
+                <dd class="col-sm-8">{{ $batch->manufacture_date ? \Carbon\Carbon::parse($batch->manufacture_date)->format('d/m/Y') : '-' }}</dd>
 
                 <dt class="col-sm-4">วันหมดอายุ:</dt>
                 <dd class="col-sm-8">{{ $batch->expiration_date ? \Carbon\Carbon::parse($batch->expiration_date)->format('d/m/Y') : '-' }}</dd>

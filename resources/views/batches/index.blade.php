@@ -18,6 +18,7 @@
                             <th scope="col">#</th>
                             <th scope="col">สินค้า</th>
                             <th scope="col">รหัสล็อต</th>
+                            <th scope="col">ตำแหน่ง</th>
                             <th scope="col">จำนวน</th>
                             <th scope="col">วันที่ผลิต</th>
                             <th scope="col">วันหมดอายุ</th>
@@ -31,8 +32,15 @@
                                 <td>{{ $loop->iteration + ($batches->currentPage() - 1) * $batches->perPage() }}</td>
                                 <td>{{ $batch->product->name ?? '-' }} ({{ $batch->product->product_code ?? '-' }})</td>
                                 <td>{{ $batch->batch_number }}</td>
+                                <td>
+                                    @if ($batch->location)
+                                        <span class="badge bg-info">{{ $batch->location->full_location }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td>{{ number_format($batch->quantity) }} {{ $batch->product->unit ?? '' }}</td>
-                                <td>{{ $batch->production_date ? \Carbon\Carbon::parse($batch->production_date)->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $batch->manufacture_date ? \Carbon\Carbon::parse($batch->manufacture_date)->format('d/m/Y') : '-' }}</td>
                                 <td>
                                     @if ($batch->expiration_date)
                                         @php

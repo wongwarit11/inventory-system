@@ -26,6 +26,9 @@
                     <p class="mb-1">รหัสสินค้า: <strong>{{ $batch->product->product_code }}</strong></p>
                     <p class="mb-1">ล็อต: <strong>{{ $batch->batch_number }}</strong></p>
                     <p class="mb-1">วันหมดอายุ: <strong>{{ $batch->expiration_date ? \Carbon\Carbon::parse($batch->expiration_date)->format('Y-m-d') : '-' }}</strong></p>
+                    @if ($batch->location)
+                        <p class="mb-1">ตำแหน่ง: <strong>{{ $batch->location->full_location }}</strong></p>
+                    @endif
                 @endif
 
                 <div class="my-3">
