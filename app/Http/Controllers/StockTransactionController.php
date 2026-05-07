@@ -24,14 +24,27 @@ class StockTransactionController extends Controller
     /**
      * Display a listing of the resource (รายการการทำรายการสต็อกทั้งหมด).
      */
-    public function index()
+    public function index(Request $request)
     {
         if ($response = $this->authorizeStaffAccess()) {
             return $response;
         }
 
-        $transactions = StockTransaction::with(['product', 'batch', 'user', 'department'])
-                                ->orderBy('transaction_date', 'desc')
+        $query = StockTransaction::with(['product', 'batch', 'user', 'department']);
+        
+        // ค้นหาตามชื่อสินค้า หรือเอกสารอ้างอิง
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->whereHas('product', function($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('product_code', 'like', '%' . $search . '%');
+                  })
+                  ->orWhere('reference_doc', 'like', '%' . $search . '%');
+            });
+        }
+        
+        $transactions = $query->orderBy('transaction_date', 'desc')
                                 ->paginate(10);
         return view('stock_transactions.index', compact('transactions'));
     }

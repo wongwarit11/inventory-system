@@ -1,8 +1,8 @@
 {
     "thsarabunnew": {
-        "normal": "\/var\/www\/html\/inventory_system\/storage\/fonts\/\/thsarabunnew_normal_11b9d82732e4f5faeb9ec18b285cae83",
-        "bold": "\/var\/www\/html\/inventory_system\/storage\/fonts\/\/thsarabunnew_bold_87860eac98ce846be68aed7189e8fe69",
-        "italic": "\/var\/www\/html\/inventory_system\/storage\/fonts\/\/thsarabunnew_italic_0f73a072863708cb93710ccc34d0eb2a",
-        "bold_italic": "thsarabunnew_bold_italic_11e52f133f581745e1ea733f4417c768"
+        "normal": "C:\\xampp\\htdocs\\inventory_system\\storage\\fonts\/\/thsarabunnew_normal_b3cbbeb0de55ab45cd2e33b9798af6a9",
+        "bold": "C:\\xampp\\htdocs\\inventory_system\\storage\\fonts\/\/thsarabunnew_bold_8e4a31d93e8d149136c925d8ce4b1390",
+        "italic": "C:\\xampp\\htdocs\\inventory_system\\storage\\fonts\/\/thsarabunnew_italic_427d0ab05eb452d8901d14c5c5dda395",
+        "bold_italic": "thsarabunnew_bold_italic_1067156966d0db4438f2dff9b85e59d0"
     }
 }

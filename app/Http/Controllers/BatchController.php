@@ -25,14 +25,28 @@ class BatchController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         if ($response = $this->authorizeStaffAccess()) {
             return $response;
         }
 
         // โหลดความสัมพันธ์ของสินค้า
-        $batches = Batch::with('product')->orderBy('batch_number')->paginate(10);
+        $query = Batch::with('product');
+        
+        // ค้นหาตามเลขล็อตหรือชื่อสินค้า
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('batch_number', 'like', '%' . $search . '%')
+                  ->orWhereHas('product', function($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('product_code', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+        
+        $batches = $query->orderBy('batch_number')->paginate(10);
         return view('batches.index', compact('batches'));
     }
 

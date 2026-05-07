@@ -28,7 +28,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
 
     // --- ส่วนนี้คือการทดสอบ Error 500 ---
         // เมื่อคุณต้องการทดสอบหน้า 500 ที่สร้างขึ้น ให้ uncomment บรรทัดนี้
@@ -42,7 +42,21 @@ class ProductController extends Controller
         }
 
         // โหลดความสัมพันธ์ของหมวดหมู่และผู้จำหน่าย
-        $products = Product::with(['category', 'supplier', 'manufacturer', 'productType'])->orderBy('name')->paginate(10);
+        $query = Product::with(['category', 'supplier', 'manufacturer', 'productType']);
+        
+        // ค้นหาตามชื่อ, รหัสสินค้า, หรือหมวดหมู่
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('product_code', 'like', '%' . $search . '%')
+                  ->orWhereHas('category', function($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+        
+        $products = $query->orderBy('name')->paginate(10);
         return view('products.index', compact('products'));
     }
 

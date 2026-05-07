@@ -12,6 +12,15 @@
 
     <div class="card shadow-lg rounded-4">
         <div class="card-body p-4">
+            {{-- Search Form --}}
+            <form method="GET" class="mb-3 d-flex gap-2">
+                <input type="text" name="search" class="form-control" placeholder="ค้นหาใบขอเบิก (เลขที่, แผนก)" value="{{ request('search') }}">
+                <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search me-1"></i>ค้นหา</button>
+                @if(request('search'))
+                    <a href="{{ route('requisitions.index') }}" class="btn btn-outline-secondary"><i class="fas fa-times me-1"></i>ล้าง</a>
+                @endif
+            </form>
+            
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle">
                     <thead class="table-primary">

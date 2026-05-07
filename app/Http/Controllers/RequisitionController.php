@@ -21,13 +21,24 @@ class RequisitionController extends Controller
      * Display a listing of the resource.
      * แสดงรายการใบขอเบิกทั้งหมด หรือเฉพาะของผู้ใช้ปัจจุบัน (สำหรับ Staff)
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = Requisition::with(['user', 'department']);
 
         // ถ้าบทบาทเป็น Staff ให้แสดงเฉพาะใบขอเบิกของตัวเอง
         if (Auth::user()->role === 'staff') {
             $query->where('user_id', Auth::id());
+        }
+        
+        // ค้นหาตามเลขที่ใบขอเบิกหรือแผนก
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('requisition_number', 'like', '%' . $search . '%')
+                  ->orWhereHas('department', function($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%');
+                  });
+            });
         }
 
         $requisitions = $query->orderBy('requisition_date', 'desc')->paginate(10);
