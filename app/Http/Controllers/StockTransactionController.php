@@ -30,17 +30,20 @@ class StockTransactionController extends Controller
             return $response;
         }
 
-        $query = StockTransaction::with(['product', 'batch', 'user', 'department']);
+        $query = StockTransaction::with(['product', 'batch.product.category', 'user', 'department']);
         
         // ค้นหาตามชื่อสินค้า หรือเอกสารอ้างอิง
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function($q) use ($search) {
                 $q->whereHas('product', function($q) use ($search) {
-                      $q->where('name', 'like', '%' . $search . '%')
-                        ->orWhere('product_code', 'like', '%' . $search . '%');
-                  })
-                  ->orWhere('reference_doc', 'like', '%' . $search . '%');
+                    $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('product_code', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('batch.product.category', function($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhere('reference_doc', 'like', '%' . $search . '%');
             });
         }
         

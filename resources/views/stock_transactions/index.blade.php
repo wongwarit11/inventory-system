@@ -31,6 +31,7 @@
                             <th scope="col">สินค้า</th>
                             <th scope="col">ล็อตสินค้า</th>
                             <th scope="col">จำนวน</th>
+                            <th scope="col">หมวดหมู่</th>
                             <th scope="col">แผนก</th>
                             <th scope="col">ผู้ทำรายการ</th>
                             <th scope="col">เอกสารอ้างอิง</th>
@@ -67,9 +68,9 @@
                                     @endif
                                     {{ $transaction->product->unit ?? '' }}
                                 </td>
+                                <td>{{ $transaction->batch->product->category->name ?? '-' }}</td>
                                 <td>{{ $transaction->department->name ?? '-' }}</td>
                                 <td>{{ $transaction->user->fullname ?? $transaction->user->username ?? '-' }}</td>
-                                <td>{{ $transaction->reference_doc ?? '-' }}</td>
                                 <td>{{ $transaction->notes ?? '-' }}</td>
                                 {{--
                                 <td class="text-center">
