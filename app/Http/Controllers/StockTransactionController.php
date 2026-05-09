@@ -6,6 +6,7 @@ use App\Models\StockTransaction;
 use App\Models\Product;
 use App\Models\Batch;
 use App\Models\Department;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -31,25 +32,40 @@ class StockTransactionController extends Controller
         }
 
         $query = StockTransaction::with(['product', 'batch.product.category', 'user', 'department']);
-        
-        // ค้นหาตามชื่อสินค้า หรือเอกสารอ้างอิง
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function($q) use ($search) {
-                $q->whereHas('product', function($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('product_code', 'like', '%' . $search . '%');
-                })
-                ->orWhereHas('batch.product.category', function($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%');
-                })
-                ->orWhere('reference_doc', 'like', '%' . $search . '%');
+
+        // Prepare filter dropdown data
+        $categories = Category::where('status', 'active')->orderBy('name')->get();
+        $departments = Department::where('status', 'active')->orderBy('name')->get();
+
+        // Apply filters: product name, category_id, department_id
+        if ($request->filled('product') || $request->filled('category_id') || $request->filled('department_id')) {
+            $product = $request->input('product');
+            $categoryId = $request->input('category_id');
+            $departmentId = $request->input('department_id');
+
+            $query->where(function($q) use ($product, $categoryId, $departmentId) {
+                if (!empty($product)) {
+                    $q->whereHas('product', function($q2) use ($product) {
+                        $q2->where('name', 'like', '%' . $product . '%')
+                           ->orWhere('product_code', 'like', '%' . $product . '%');
+                    });
+                }
+
+                if (!empty($categoryId)) {
+                    $q->whereHas('batch.product.category', function($q3) use ($categoryId) {
+                        $q3->where('id', $categoryId);
+                    });
+                }
+
+                if (!empty($departmentId)) {
+                    $q->where('department_id', $departmentId);
+                }
             });
         }
         
         $transactions = $query->orderBy('transaction_date', 'desc')
                                 ->paginate(10);
-        return view('stock_transactions.index', compact('transactions'));
+        return view('stock_transactions.index', compact('transactions', 'categories', 'departments'));
     }
 
     /**

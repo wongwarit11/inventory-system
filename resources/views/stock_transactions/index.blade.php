@@ -12,13 +12,26 @@
     </div>
     <div class="card shadow-lg rounded-4">
         <div class="card-body p-4">
-            {{-- Search Form --}}
-            <form method="GET" class="mb-3 d-flex gap-2">
-                <input type="text" name="search" class="form-control" placeholder="ค้นหารายการ (สินค้า, เอกสาร)" value="{{ request('search') }}">
+            {{-- Filters: product name, category, department --}}
+            <form method="GET" class="mb-3 d-flex gap-2 align-items-center">
+                <input type="text" name="product" class="form-control" placeholder="ค้นหาชื่อสินค้า" value="{{ request('product') }}">
+
+                <select name="category_id" class="form-select" style="max-width: 260px;">
+                    <option value="">เลือกหมวดหมู่</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+
+                <select name="department_id" class="form-select" style="max-width: 260px;">
+                    <option value="">เลือกแผนก</option>
+                    @foreach($departments as $dept)
+                        <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
+                    @endforeach
+                </select>
+
                 <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search me-1"></i>ค้นหา</button>
-                @if(request('search'))
-                    <a href="{{ route('stock_transactions.index') }}" class="btn btn-outline-secondary"><i class="fas fa-times me-1"></i>ล้าง</a>
-                @endif
+                <a href="{{ route('stock_transactions.index') }}" class="btn btn-outline-secondary"><i class="fas fa-times me-1"></i>ล้างตัวกรอง</a>
             </form>
             
             <div class="table-responsive">
@@ -43,7 +56,7 @@
                         @forelse ($transactions as $transaction)
                             <tr>
                                 <td>{{ $loop->iteration + ($transactions->currentPage() - 1) * $transactions->perPage() }}</td>
-                                <td>{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d/m/Y H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($transaction->created_at)->timezone('Asia/Bangkok')->format('d/m/Y H:i') }}</td>
                                 <td>
                                     @php
                                         $typeClass = '';
