@@ -27,6 +27,15 @@ patients.db
 public/phpinfo.php 
 storage/fonts/*.ufm 
 storage/fonts/*.json 
-"public/C__*" 
-"tests/search_*.php" 
+public/C__*
+tests/search_*.php
+tests/search_*.ps1
+tests/search_test.php
+storage/framework/views/*
+storage/framework/cache/*
+storage/framework/sessions/*
+public/C__*
+tests/search_*.php
+*.db
+test_*.php
 "inventory-system" 
