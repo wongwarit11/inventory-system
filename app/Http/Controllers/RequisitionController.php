@@ -53,6 +53,12 @@ class RequisitionController extends Controller
     {
         $departments = Department::where('status', 'active')->orderBy('name')->get();
         $products = Product::where('status', 'active')->orderBy('name')->get();
+        
+        // คำนวณ stock จาก batches
+        $products->each(function($product) {
+            $product->current_quantity = $product->batches()->sum('current_quantity');
+        });
+        
         return view('requisitions.create', compact('departments', 'products'));
     }
 
@@ -160,6 +166,11 @@ class RequisitionController extends Controller
 
         $departments = Department::where('status', 'active')->orderBy('name')->get();
         $products = Product::where('status', 'active')->orderBy('name')->get();
+
+        // เพิ่มบรรทัดนี้
+        $products->each(function($product) {
+            $product->current_quantity = $product->batches()->sum('current_quantity');
+        });
         $requisition->load('items'); // โหลดรายการสินค้าที่ขอเบิก
         return view('requisitions.edit', compact('requisition', 'departments', 'products'));
     }
