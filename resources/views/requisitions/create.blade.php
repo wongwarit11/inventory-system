@@ -105,7 +105,7 @@
                         <select class="form-select product-select" id="product_id_${itemIndex}" name="products[${itemIndex}][product_id]" required>
                             <option value="">-- เลือกสินค้า --</option>
                             @foreach ($products as $product)
-                                <option value="{{ $product->id }}" data-unit="{{ $product->unit }}">{{ $product->name }} ({{ $product->product_code }})</option>
+                                <option value="{{ $product->id }}" data-unit="{{ $product->unit }}">{{ $product->name }} ({{ $product->product_code }}) (คงเหลือ: {{ $product->current_quantity ?? 0 }} {{ $product->unit }})</option>
                             @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
