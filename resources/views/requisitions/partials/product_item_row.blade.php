@@ -8,7 +8,7 @@
             <option value="">-- เลือกสินค้า --</option>
             @foreach ($products as $product)
                 <option value="{{ $product->id }}" data-unit="{{ $product->unit }}" {{ (isset($oldProduct['product_id']) && $oldProduct['product_id'] == $product->id) ? 'selected' : '' }}>
-                    {{ $product->name }} ({{ $product->product_code }})
+                    {{ $product->name }} ({{ $product->product_code }}) (คงเหลือ: {{ $product->current_quantity ?? 0 }} {{ $product->unit }})
                 </option>
             @endforeach
         </select>
