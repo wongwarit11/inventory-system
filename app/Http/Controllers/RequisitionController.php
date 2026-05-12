@@ -194,7 +194,7 @@ class RequisitionController extends Controller
         $request->validate([
             'department_id' => 'required|exists:departments,id',
             'requisition_date' => 'required|date|before_or_equal:today',
-            'status' => 'required|in:pending,approved,issued,cancelled', // สถานะที่สามารถอัปเดตได้
+            'status' => 'nullable|in:pending,approved,issued,cancelled', // สถานะที่สามารถอัปเดตได้
             'notes' => 'nullable|string|max:500',
             'products' => 'required|array|min:1',
             'products.*.item_id' => 'nullable|exists:requisition_items,id',
@@ -220,7 +220,7 @@ class RequisitionController extends Controller
             $requisition->update([
                 'department_id' => $request->department_id,
                 'requisition_date' => $request->requisition_date,
-                'status' => $request->status,
+                'status' => $request->status ?? $requisition->status, // อัปเดตสถานะถ้ามีการส่งมา
                 'notes' => $request->notes,
             ]);
 
