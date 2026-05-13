@@ -38,7 +38,7 @@ body { font-family: 'THSarabunNew', sans-serif; font-size: 14px; color: #2C2C2A;
       <img src="{{ public_path('images/hospital_logo.png') }}" style="width: 56px; height: 56px;">
     </td>
     <td style="vertical-align: middle; padding-left: 10px;">
-      <div class="hospital-name">โรงพยาบาลวัดห้วยหลากั้งเพื่อสังคม</div>
+      <div class="hospital-name">โรงพยาบาลวัดห้วยปลากั้งเพื่อสังคม</div>
       <div class="hospital-sub">Wat Huay Pakang Hospital for Society</div>
     </td>
     <td style="text-align: right; vertical-align: middle;">
