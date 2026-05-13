@@ -60,7 +60,7 @@ body { font-family: 'THSarabunNew', sans-serif; font-size: 14px; color: #2C2C2A;
           <table style="width: 100%;">
             <tr>
               <td class="info-key">ผู้ขอเบิก</td>
-              <td class="info-val">{{ $requisition->user->name ?? '-' }}</td>
+              <td class="info-val">{{ $requisition->user->fullname ?? '-' }}</td>
             </tr>
             <tr>
               <td class="info-key">แผนก</td>
@@ -141,7 +141,7 @@ body { font-family: 'THSarabunNew', sans-serif; font-size: 14px; color: #2C2C2A;
     <td style="width: 33%; text-align: center; vertical-align: top; padding: 0 10px;">
       <div class="sig-line">
         <div class="sig-name">ผู้ขอเบิก</div>
-        <div class="sig-sub">({{ $requisition->user->name ?? '................................' }})</div>
+        <div class="sig-sub">({{ $requisition->user->fullname ?? '................................' }})</div>
         <div class="sig-date">วันที่ ......./......./.......</div>
       </div>
     </td>
