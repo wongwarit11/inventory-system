@@ -105,7 +105,19 @@
                         <select class="form-select product-select" id="product_id_${itemIndex}" name="products[${itemIndex}][product_id]" required>
                             <option value="">-- เลือกสินค้า --</option>
                             @foreach ($products as $product)
-                                <option value="{{ $product->id }}" data-unit="{{ $product->unit }}">{{ $product->name }} ({{ $product->product_code }}) (คงเหลือ: {{ $product->current_quantity ?? 0 }} {{ $product->unit }})</option>
+                                @if($product->batches->count() > 0)
+                                    @foreach($product->batches as $batch)
+                                        <option value="{{ $product->id }}"
+                                            data-unit="{{ $product->unit }}"
+                                            data-batch-id="{{ $batch->id }}">
+                                            {{ $product->name }} ({{ $product->product_code }}) — Lot: {{ $batch->batch_number }} (คงเหลือ: {{ $batch->quantity ?? 0}} {{ $product->unit }})
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="{{ $product->id }}" data-unit="{{ $product->unit }}" disabled>
+                                        {{ $product->name }} ({{ $product->product_code }}) — ไม่มีสต็อก
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
