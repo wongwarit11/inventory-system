@@ -64,7 +64,7 @@ class StockTransactionController extends Controller
         }
         
         $transactions = $query->orderBy('transaction_date', 'desc')
-                                ->paginate(10);
+                                ->paginate(20);
         return view('stock_transactions.index', compact('transactions', 'categories', 'departments'));
     }
 
