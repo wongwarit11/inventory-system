@@ -142,6 +142,7 @@
                 updateUnitDisplayForNewRow(newRow);
                 addRemoveButtonListener(newRow);
                 addSelectChangeListener(newRow);
+                addSearchToSelect(newRow);
                 itemIndex++;
             });
 
@@ -189,11 +190,48 @@
                 }
             }
 
+            function addSearchToSelect(row) {
+                const productSelect = row.querySelector('.product-select');
+                if (!productSelect) return;
+
+                // สร้าง search input
+                const searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.className = 'form-control mb-1';
+                searchInput.placeholder = 'พิมพ์เพื่อค้นหาสินค้า...';
+
+                // แทรก search input ก่อน select
+                productSelect.parentNode.insertBefore(searchInput, productSelect);
+
+                // เก็บ options เดิมทั้งหมด
+                const allOptions = Array.from(productSelect.options);
+
+                // Real-time search
+                searchInput.addEventListener('input', function() {
+                    const keyword = this.value.toLowerCase();
+                    const currentValue = productSelect.value;
+
+                    // ลบ options เดิม
+                    productSelect.innerHTML = '';
+
+                    // กรอง options ตาม keyword
+                    allOptions.forEach(option => {
+                        if (option.value === '' || option.text.toLowerCase().includes(keyword)) {
+                            productSelect.appendChild(option.cloneNode(true));
+                        }
+                    });
+
+                    // คืนค่าที่เลือกไว้
+                    productSelect.value = currentValue;
+                });
+            }
+
             // Initial setup for existing rows (e.g., from old input after validation error)
             document.querySelectorAll('.product-item-row').forEach(row => {
                 updateUnitDisplayForNewRow(row);
                 addRemoveButtonListener(row);
                 addSelectChangeListener(row);
+                addSearchToSelect(row);
             });
         });
     </script>
