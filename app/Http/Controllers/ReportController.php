@@ -89,14 +89,26 @@ class ReportController extends Controller
             return $response;
         }
 
-        // ดึงสินค้าที่สต็อกต่ำกว่าจุดต่ำสุด
-        $lowStockProducts = Product::where('minimum_stock_level', '>', 0)
-                                    ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
-                                    ->with('category', 'supplier', 'manufacturer', 'productType') // โหลดความสัมพันธ์
-                                    ->orderBy('name')
-                                    ->paginate(15);
+        $query = Product::where('minimum_stock_level', '>', 0)
+                        ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
+                        ->with('category', 'supplier', 'manufacturer', 'productType');
 
-        return view('reports.low_stock_products_report', compact('lowStockProducts'));
+        // กรองชื่อสินค้า
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('product_code', 'like', '%' . $search . '%');
+        }
+
+        // กรองผู้ผลิต
+        if ($request->filled('manufacturer_id')) {
+            $query->where('manufacturer_id', $request->input('manufacturer_id'));
+        }
+
+        $lowStockProducts = $query->orderBy('name')->paginate(15);
+        $manufacturers = \App\Models\Manufacturer::orderBy('name')->get();
+
+        return view('reports.low_stock_products_report', compact('lowStockProducts', 'manufacturers'));
     }
 
     /**

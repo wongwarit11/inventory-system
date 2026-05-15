@@ -14,6 +14,39 @@
         </div>
     @endif
 
+    <form method="GET" action="{{ route('reports.low_stock_products') }}" class="mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">ค้นหาชื่อสินค้า</label>
+                <input type="text" name="search" class="form-control" 
+                    placeholder="รหัสสินค้า / ชื่อสินค้า" 
+                    value="{{ request('search') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">ผู้ผลิต</label>
+                <select name="manufacturer_id" class="form-select">
+                    <option value="">-- ทั้งหมด --</option>
+                    @foreach($manufacturers as $manufacturer)
+                        <option value="{{ $manufacturer->id }}" 
+                            {{ request('manufacturer_id') == $manufacturer->id ? 'selected' : '' }}>
+                            {{ $manufacturer->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i> ค้นหา
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ route('reports.low_stock_products') }}" class="btn btn-secondary w-100">
+                    <i class="fas fa-times me-1"></i> ล้างตัวกรอง
+                </a>
+            </div>
+        </div>
+    </form>    
+
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
