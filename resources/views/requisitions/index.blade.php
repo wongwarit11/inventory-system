@@ -40,7 +40,7 @@
                             <tr>
                                 <td>{{ $loop->iteration + ($requisitions->currentPage() - 1) * $requisitions->perPage() }}</td>
                                 <td>REQ-{{ $requisition->requisition_number }}</td>
-                                <td>{{ \Carbon\Carbon::parse($requisition->requisition_date)->timezone('Asia/Bangkok')->format('d/m/Y H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($requisition->created_at)->timezone('Asia/Bangkok')->format('d/m/Y H:i') }}</td>    
                                 <td>{{ $requisition->department->name ?? '-' }}</td>
                                 <td>{{ $requisition->user->fullname ?? $requisition->user->username ?? '-' }}</td>
                                 <td>
