@@ -12,7 +12,62 @@
             {{ session('error') }}
         </div>
     @endif
-
+    <form method="GET" action="{{ route('reports.stock') }}" class="mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">รหัส/ชื่อสินค้า</label>
+                <input type="text" name="search" class="form-control"
+                    placeholder="รหัสสินค้า / ชื่อสินค้า"
+                    value="{{ request('search') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">หมวดหมู่</label>
+                <select name="category_id" class="form-select">
+                    <option value="">-- ทั้งหมด --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}"
+                            {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">ประเภทสินค้า</label>
+                <select name="product_type_id" class="form-select">
+                    <option value="">-- ทั้งหมด --</option>
+                    @foreach($productTypes as $type)
+                        <option value="{{ $type->id }}"
+                            {{ request('product_type_id') == $type->id ? 'selected' : '' }}>
+                            {{ $type->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">ผู้ผลิต</label>
+                <select name="manufacturer_id" class="form-select">
+                    <option value="">-- ทั้งหมด --</option>
+                    @foreach($manufacturers as $manufacturer)
+                        <option value="{{ $manufacturer->id }}"
+                            {{ request('manufacturer_id') == $manufacturer->id ? 'selected' : '' }}>
+                            {{ $manufacturer->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ route('reports.stock') }}" class="btn btn-secondary w-100">
+                    <i class="fas fa-times me-1"></i> ล้างตัวกรอง
+                </a>
+            </div>
+        </div>
+    </form>
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">

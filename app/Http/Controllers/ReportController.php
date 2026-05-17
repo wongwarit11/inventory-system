@@ -30,15 +30,50 @@ class ReportController extends Controller
             return $response;
         }
 
-        $batches = Batch::with(['product.category', 'product.productType', 'product.manufacturer', 'location'])
-                        ->whereHas('product', function($query) {
-                            $query->where('status', 'active');
-                        })
-                        ->orderBy('product_id')
+        $query = Batch::with(['product.category', 'product.productType', 'product.manufacturer', 'location'])
+                        ->whereHas('product', function($q) {
+                            $q->where('status', 'active');
+                        });
+
+        // กรองรหัส/ชื่อสินค้า
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->whereHas('product', function($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                ->orWhere('product_code', 'like', '%'.$search.'%');
+            });
+        }
+
+        // กรองหมวดหมู่
+        if ($request->filled('category_id')) {
+            $query->whereHas('product', function($q) use ($request) {
+                $q->where('category_id', $request->category_id);
+            });
+        }
+
+        // กรองประเภทสินค้า
+        if ($request->filled('product_type_id')) {
+            $query->whereHas('product', function($q) use ($request) {
+                $q->where('product_type_id', $request->product_type_id);
+            });
+        }
+
+        // กรองผู้ผลิต
+        if ($request->filled('manufacturer_id')) {
+            $query->whereHas('product', function($q) use ($request) {
+                $q->where('manufacturer_id', $request->manufacturer_id);
+            });
+        }
+
+        $batches = $query->orderBy('product_id')
                         ->orderBy('expiration_date', 'asc')
                         ->paginate(15);
 
-        return view('reports.stock_report', compact('batches'));
+        $categories = \App\Models\Category::orderBy('name')->get();
+        $productTypes = \App\Models\ProductType::orderBy('name')->get();
+        $manufacturers = \App\Models\Manufacturer::orderBy('name')->get();
+
+        return view('reports.stock_report', compact('batches', 'categories', 'productTypes', 'manufacturers'));
     }
 
     /**
