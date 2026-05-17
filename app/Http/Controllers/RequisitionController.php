@@ -41,7 +41,7 @@ class RequisitionController extends Controller
             });
         }
 
-        $requisitions = $query->orderBy('requisition_date', 'desc')->paginate(10);
+        $requisitions = $query->orderBy('requisition_date', 'desc')->paginate(15);
         return view('requisitions.index', compact('requisitions'));
     }
 
