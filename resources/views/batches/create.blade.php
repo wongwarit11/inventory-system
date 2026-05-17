@@ -44,10 +44,18 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="batch_number" class="form-label fw-bold">รหัสล็อต <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-lg rounded-pill @error('batch_number') is-invalid @enderror" id="batch_number" name="batch_number" value="{{ old('batch_number') }}" required placeholder="กรอกรหัสล็อตสินค้า">
+                            <label for="batch_prefix" class="form-label fw-bold">รหัสล็อต <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-lg @error('batch_number') is-invalid @enderror" 
+                                    id="batch_prefix" 
+                                    placeholder="กรอกชื่อล็อต เช่น PARA500"
+                                    oninput="generateBatchNumber()">
+                                <span class="input-group-text" id="date_suffix">-{{ date('dmY') }}</span>
+                                <input type="hidden" id="batch_number" name="batch_number" value="{{ old('batch_number') }}">
+                            </div>
+                            <small class="text-muted">รหัสล็อตที่จะได้: <strong id="preview_batch">-</strong></small>
                             @error('batch_number')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
@@ -106,4 +114,33 @@
             </form>
         </div>
     </div>
+    <script>
+        function generateBatchNumber() {
+            const prefix = document.getElementById('batch_prefix').value.trim();
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            const dateSuffix = day + month + year;
+            
+            const batchNumber = prefix ? prefix + '-' + dateSuffix : '';
+            document.getElementById('batch_number').value = batchNumber;
+            document.getElementById('preview_batch').textContent = batchNumber || '-';
+            document.getElementById('date_suffix').textContent = '-' + dateSuffix;
+        }
+
+        // Generate on page load ถ้ามี old value
+        document.addEventListener('DOMContentLoaded', function() {
+            const oldValue = '{{ old('batch_number') }}';
+            if (oldValue) {
+                const parts = oldValue.split('-');
+                if (parts.length >= 2) {
+                    const prefix = parts.slice(0, -1).join('-');
+                    document.getElementById('batch_prefix').value = prefix;
+                }
+                document.getElementById('preview_batch').textContent = oldValue;
+            }
+            generateBatchNumber();
+        });
+    </script>
 @endsection
