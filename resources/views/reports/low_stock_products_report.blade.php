@@ -60,6 +60,7 @@
                             <th>ผู้ผลิต</th>
                             <th>ประเภทสินค้า</th>
                             <th>หน่วยนับ</th>
+                            <th>ราคาต้นทุน (ต่อหน่วย)</th>
                             <th>สต็อกปัจจุบัน</th>
                             <th>จุดต่ำสุด</th>
                             <th>สถานะ</th>
@@ -75,6 +76,7 @@
                                 <td>{{ $product->manufacturer->name ?? '-' }}</td>
                                 <td>{{ $product->productType->name ?? '-' }}</td>
                                 <td>{{ $product->unit }}</td>
+                                <td>{{ number_format($product->cost_price, 2) }}</td> 
                                 <td>
                                     {{ number_format($product->batches->sum('quantity')) }}
                                 </td>
@@ -87,7 +89,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center">ไม่พบสินค้าที่สต็อกต่ำกว่าจุดต่ำสุด</td>
+                                <td colspan="11" class="text-center">ไม่พบสินค้าที่สต็อกต่ำกว่าจุดต่ำสุด</td>
                             </tr>
                         @endforelse
                     </tbody>
