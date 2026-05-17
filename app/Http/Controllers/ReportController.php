@@ -146,6 +146,36 @@ class ReportController extends Controller
         return view('reports.low_stock_products_report', compact('lowStockProducts', 'manufacturers'));
     }
 
+    public function exportLowStock(Request $request)
+    {
+        if ($response = $this->authorizeReportAccess()) {
+            return $response;
+        }
+
+        $query = Product::where('minimum_stock_level', '>', 0)
+                        ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
+                        ->with('category', 'supplier', 'manufacturer', 'productType');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                ->orWhere('product_code', 'like', '%'.$search.'%');
+            });
+        }
+
+        if ($request->filled('manufacturer_id')) {
+            $query->where('manufacturer_id', $request->manufacturer_id);
+        }
+
+        $products = $query->orderBy('name')->get();
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\LowStockExport($products),
+            'low_stock_products_' . now()->format('Ymd_His') . '.xlsx'
+        );
+    }
+
     /**
      * Display the Expiring Batches Report.
      */

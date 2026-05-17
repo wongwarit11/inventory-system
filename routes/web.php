@@ -99,6 +99,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/stock', [ReportController::class, 'stockReport'])->name('reports.stock');
     Route::get('/reports/requisition', [ReportController::class, 'requisitionReport'])->name('reports.requisition');
     Route::get('/reports/low-stock-products', [ReportController::class, 'lowStockProductsReport'])->name('reports.low_stock_products');
+    Route::get('/reports/low-stock-products/export', [ReportController::class, 'exportLowStock'])->name('reports.low_stock_products.export');
     Route::get('/reports/expiring-batches', [ReportController::class, 'expiringBatchesReport'])->name('reports.expiring_batches'); 
     Route::get('/reports/pending-requisitions', [ReportController::class, 'pendingRequisitionsReport'])->name('reports.pending_requisitions');
 

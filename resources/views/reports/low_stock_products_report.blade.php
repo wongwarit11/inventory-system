@@ -5,7 +5,15 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1><i class="fas fa-exclamation-triangle me-2"></i> รายงานสินค้าสต็อกต่ำกว่าจุดต่ำสุด</h1>
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary"><i class="fas fa-arrow-alt-circle-left me-2"></i> กลับ Dashboard</a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('reports.low_stock_products.export', request()->query()) }}" 
+            class="btn btn-success">
+                <i class="fas fa-file-excel me-2"></i> ส่งออก Excel
+            </a>
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-alt-circle-left me-2"></i> กลับ Dashboard
+            </a>
+        </div>
     </div>
 
     @if (session('error'))
