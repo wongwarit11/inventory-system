@@ -22,13 +22,19 @@
                             <th>#</th>
                             <th>รหัสสินค้า</th>
                             <th>ชื่อสินค้า</th>
+                            <th>หมวดหมู่</th>
+                            <th>ประเภทสินค้า</th>
+                            <th>ผู้ผลิต</th>
                             <th>ล็อตสินค้า</th>
                             <th>ตำแหน่ง</th>
                             <th>วันหมดอายุ</th>
                             <th>ราคาต้นทุน (ต่อหน่วย)</th>
+                            <th>มูลค่ารวม</th>
                             <th>จุดต่ำสุดที่ต้องสั่งซื้อ</th>
                             <th>จำนวนคงเหลือ</th>
                             <th>หน่วยนับ</th>
+                            <th>สถานะสินค้า</th>
+                            <th>สถานะสต็อก</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,6 +43,9 @@
                                 <td>{{ $loop->iteration + ($batches->currentPage() - 1) * $batches->perPage() }}</td>
                                 <td>{{ $batch->product->product_code ?? '-' }}</td>
                                 <td>{{ $batch->product->name ?? '-' }}</td>
+                                <td>{{ $batch->product->category->name ?? '-' }}</td>
+                                <td>{{ $batch->product->productType->name ?? '-' }}</td>
+                                <td>{{ $batch->product->manufacturer->name ?? '-' }}</td>
                                 <td>{{ $batch->batch_number ?? '-' }}</td>
                                 <td>
                                     @if ($batch->location)
@@ -73,6 +82,7 @@
                                     @endif
                                 </td>
                                 <td>{{ number_format($batch->product->cost_price, 2) ?? '-' }}</td>
+                                <td>{{ number_format($batch->quantity * ($batch->product->cost_price ?? 0), 2) }}</td>
                                 <td>
                                     @if ($batch->quantity <= $batch->product->minimum_stock_level)
                                         <span class="text-danger fw-bold">
@@ -84,10 +94,28 @@
                                 </td>
                                 <td>{{ $batch->quantity }}</td>
                                 <td>{{ $batch->product->unit ?? '-' }}</td>
+                                <td>
+                                    <span class="badge {{ $batch->product->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ $batch->product->status == 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @php
+                                        $currentQty = $batch->quantity;
+                                        $minLevel = $batch->product->minimum_stock_level ?? 0;
+                                    @endphp
+                                    @if($currentQty <= 0)
+                                        <span class="badge bg-danger">หมดแล้ว</span>
+                                    @elseif($currentQty <= $minLevel)
+                                        <span class="badge bg-warning text-dark">ใกล้หมด</span>
+                                    @else
+                                        <span class="badge bg-success">ปกติ</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center">ไม่พบข้อมูลสต็อก</td>
+                                <td colspan="16" class="text-center">ไม่พบข้อมูลสต็อก</td>
                             </tr>
                         @endforelse
                     </tbody>
