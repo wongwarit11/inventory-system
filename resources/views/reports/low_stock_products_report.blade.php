@@ -106,7 +106,7 @@
 
             {{-- Pagination Links --}}
             <div class="d-flex justify-content-center">
-                {{ $lowStockProducts->links('pagination::bootstrap-5') }}
+                {{ $lowStockProducts->appends(request()->query())->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
