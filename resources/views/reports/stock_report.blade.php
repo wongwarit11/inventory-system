@@ -179,7 +179,7 @@
 
             {{-- Pagination Links --}}
             <div class="d-flex justify-content-center">
-                {{ $batches->links('pagination::bootstrap-5') }}
+                {{ $batches->appends(request()->query())->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
