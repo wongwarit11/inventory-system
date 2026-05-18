@@ -75,7 +75,6 @@ class BatchController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'batch_number' => 'required|string|max:255|unique:batches,batch_number',
-            'quantity' => 'required|integer|min:0',
             'expiration_date' => 'nullable|date',
             'status' => 'required|in:active,inactive',
             'location_id' => 'nullable|exists:locations,id',
@@ -84,16 +83,19 @@ class BatchController extends Controller
             'product_id.exists' => 'สินค้าไม่ถูกต้อง',
             'batch_number.required' => 'กรุณากรอกรหัสล็อต',
             'batch_number.unique' => 'รหัสล็อตนี้มีอยู่ในระบบแล้ว',
-            'quantity.required' => 'กรุณากรอกจำนวน',
-            'quantity.integer' => 'จำนวนต้องเป็นตัวเลขจำนวนเต็ม',
-            'quantity.min' => 'จำนวนต้องไม่น้อยกว่า 0',
-
             'status.required' => 'กรุณาเลือกสถานะ',
             'status.in' => 'สถานะไม่ถูกต้อง',
             'location_id.exists' => 'ตำแหน่งเก็บสินค้าไม่ถูกต้อง',
         ]);
 
-        Batch::create($request->all());
+        Batch::create([
+            'product_id' => $request->product_id,
+            'batch_number' => $request->batch_number,
+            'quantity' => 0, // ตั้งค่าเริ่มต้นเป็น 0 เสมอ
+            'expiration_date' => $request->expiration_date,
+            'status' => $request->status,
+            'location_id' => $request->location_id,
+        ]);
         return redirect()->route('batches.index')->with('success', 'เพิ่มล็อตสินค้าใหม่เรียบร้อยแล้ว!');
     }
 
