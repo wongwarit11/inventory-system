@@ -46,7 +46,7 @@ class BatchController extends Controller
             });
         }
         
-        $batches = $query->orderBy('batch_number')->paginate(10);
+        $batches = $query->orderBy('created_at', 'desc')->paginate(15);
         return view('batches.index', compact('batches'));
     }
 
