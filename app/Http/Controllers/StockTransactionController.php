@@ -33,38 +33,33 @@ class StockTransactionController extends Controller
 
         $query = StockTransaction::with(['product', 'batch.product.category', 'user', 'department']);
 
-        // Prepare filter dropdown data
         $categories = Category::where('status', 'active')->orderBy('name')->get();
         $departments = Department::where('status', 'active')->orderBy('name')->get();
 
-        // Apply filters: product name, category_id, department_id
-        if ($request->filled('product') || $request->filled('category_id') || $request->filled('department_id')) {
+        if ($request->filled('product')) {
             $product = $request->input('product');
-            $categoryId = $request->input('category_id');
-            $departmentId = $request->input('department_id');
-
-            $query->where(function($q) use ($product, $categoryId, $departmentId) {
-                if (!empty($product)) {
-                    $q->whereHas('product', function($q2) use ($product) {
-                        $q2->where('name', 'like', '%' . $product . '%')
-                           ->orWhere('product_code', 'like', '%' . $product . '%');
-                    });
-                }
-
-                if (!empty($categoryId)) {
-                    $q->whereHas('batch.product.category', function($q3) use ($categoryId) {
-                        $q3->where('id', $categoryId);
-                    });
-                }
-
-                if (!empty($departmentId)) {
-                    $q->where('department_id', $departmentId);
-                }
+            $query->whereHas('product', function($q) use ($product) {
+                $q->where('name', 'like', '%' . $product . '%')
+                ->orWhere('product_code', 'like', '%' . $product . '%');
             });
         }
-        
-        $transactions = $query->orderBy('transaction_date', 'desc')
-                                ->paginate(20);
+
+        if ($request->filled('category_id')) {
+            $categoryId = $request->input('category_id');
+            $query->whereHas('batch.product.category', function($q) use ($categoryId) {
+                $q->where('id', $categoryId);
+            });
+        }
+
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->input('department_id'));
+        }
+
+        if ($request->filled('type')) {
+            $query->where('transaction_type', $request->input('type'));
+        }
+
+        $transactions = $query->orderBy('transaction_date', 'desc')->paginate(20);
         return view('stock_transactions.index', compact('transactions', 'categories', 'departments'));
     }
 
