@@ -28,6 +28,32 @@ body { font-family: 'THSarabunNew', sans-serif; font-size: 14px; color: #2C2C2A;
 .sig-name { font-size: 12px; font-weight: bold; }
 .sig-sub { font-size: 11px; color: #5F5E5A; margin-top: 2px; }
 .sig-date { font-size: 11px; color: #888780; margin-top: 4px; }
+@font-face {
+    font-family: 'THSarabunNew';
+    font-style: normal;
+    font-weight: normal;
+    src: url('{{ storage_path("fonts/THSarabunNew.ttf") }}') format('truetype');
+}
+@font-face {
+    font-family: 'THSarabunNew';
+    font-style: normal;
+    font-weight: bold;
+    src: url('{{ storage_path("fonts/THSarabunNew Bold.ttf") }}') format('truetype');
+}
+@font-face {
+    font-family: 'THSarabunNew';
+    font-style: italic;
+    font-weight: normal;
+    src: url('{{ storage_path("fonts/THSarabunNew Italic.ttf") }}') format('truetype');
+}
+@font-face {
+    font-family: 'THSarabunNew';
+    font-style: italic;
+    font-weight: bold;
+    src: url('{{ storage_path("fonts/THSarabunNew BoldItalic.ttf") }}') format('truetype');
+}
+* { font-family: 'THSarabunNew', sans-serif; }
+body { font-family: 'THSarabunNew', sans-serif; font-size: 14px; color: #2C2C2A; padding: 30px; }
 </style>
 </head>
 <body>
