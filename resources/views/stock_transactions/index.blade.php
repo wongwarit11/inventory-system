@@ -32,9 +32,10 @@
 
                 <select name="type" class="form-select" style="max-width: 200px;">
                     <option value="">ประเภท: ทั้งหมด</option>
-                    <option value="receive" {{ request('type') == 'receive' ? 'selected' : '' }}>รับเข้า</option>
-                    <option value="issue" {{ request('type') == 'issue' ? 'selected' : '' }}>จ่ายออก</option>
-                    <option value="adjust" {{ request('type') == 'adjust' ? 'selected' : '' }}>ปรับสต็อก</option>
+                    <option value="in" {{ request('type') == 'in' ? 'selected' : '' }}>รับเข้า</option>
+                    <option value="out" {{ request('type') == 'out' ? 'selected' : '' }}>จ่ายออก</option>
+                    <option value="adjustment_in" {{ request('type') == 'adjustment_in' ? 'selected' : '' }}>ปรับเพิ่ม</option>
+                    <option value="adjustment_out" {{ request('type') == 'adjustment_out' ? 'selected' : '' }}>ปรับลด</option>
                 </select>
 
                 <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search me-1"></i>ค้นหา</button>
