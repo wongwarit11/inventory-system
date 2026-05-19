@@ -336,4 +336,65 @@ class StockTransactionController extends Controller
             return redirect()->back()->withInput()->with('error', 'เกิดข้อผิดพลาดในการบันทึกรายการปรับปรุง: ' . $e->getMessage());
         }
     }
+
+    public function editReceive(StockTransaction $transaction)
+    {
+        if ($response = $this->authorizeStaffAccess()) {
+            return $response;
+        }
+
+        if ($transaction->transaction_type !== 'in') {
+            return redirect()->route('stock_transactions.index')->with('error', 'สามารถแก้ไขได้เฉพาะรายการรับเข้าเท่านั้น');
+        }
+
+        $departments = Department::where('status', 'active')->orderBy('name')->get();
+        return view('stock_transactions.edit_receive', compact('transaction', 'departments'));
+    }
+
+    public function updateReceive(Request $request, StockTransaction $transaction)
+    {
+        if ($response = $this->authorizeStaffAccess()) {
+            return $response;
+        }
+
+        if ($transaction->transaction_type !== 'in') {
+            return redirect()->route('stock_transactions.index')->with('error', 'สามารถแก้ไขได้เฉพาะรายการรับเข้าเท่านั้น');
+        }
+
+        $request->validate([
+            'quantity'         => 'required|integer|min:1',
+            'transaction_date' => 'required|date',
+            'department_id'    => 'nullable|exists:departments,id',
+            'notes'            => 'nullable|string|max:500',
+        ]);
+
+        // คำนวณผลต่างจำนวนเพื่ออัปเดต batch
+        $diff = $request->quantity - $transaction->quantity;
+
+        DB::beginTransaction();
+        try {
+            // อัปเดต transaction
+            $transaction->update([
+                'quantity'         => $request->quantity,
+                'transaction_date' => $request->transaction_date,
+                'department_id'    => $request->department_id,
+                'notes'            => $request->notes,
+            ]);
+
+            // อัปเดตยอดสต็อกใน batch
+            if ($diff !== 0) {
+                $batch = $transaction->batch;
+                if ($batch) {
+                    $batch->quantity += $diff;
+                    $batch->save();
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('stock_transactions.index')->with('success', 'แก้ไขรายการรับเข้าเรียบร้อยแล้ว');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
+        }
+    }
 }

@@ -62,7 +62,7 @@
                     </thead>
                     <tbody>
                         @forelse ($transactions as $transaction)
-                            <tr>
+                            <tr {{ $transaction->transaction_type === 'in' ? 'style=cursor:pointer onclick=window.location=\''.route('stock_transactions.receive.edit', $transaction->id).'\'' : '' }}>
                                 <td>{{ $loop->iteration + ($transactions->currentPage() - 1) * $transactions->perPage() }}</td>
                                 <td>{{ \Carbon\Carbon::parse($transaction->created_at)->timezone('Asia/Bangkok')->format('d/m/Y H:i') }}</td>
                                 <td>

@@ -80,6 +80,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/stock-transactions/issue', [StockTransactionController::class, 'storeIssue'])->name('stock_transactions.issue.store');
     Route::get('/stock-transactions/adjust', [StockTransactionController::class, 'createAdjust'])->name('stock_transactions.adjust.create');
     Route::post('/stock-transactions/adjust', [StockTransactionController::class, 'storeAdjust'])->name('stock_transactions.adjust.store');
+    Route::get('/stock-transactions/{transaction}/edit-receive', [StockTransactionController::class, 'editReceive'])->name('stock_transactions.receive.edit');
+    Route::put('/stock-transactions/{transaction}/edit-receive', [StockTransactionController::class, 'updateReceive'])->name('stock_transactions.receive.update');
 
     // Scanner routes
     Route::get('/scanner', [ScannerController::class, 'index'])->name('scanner.index');
