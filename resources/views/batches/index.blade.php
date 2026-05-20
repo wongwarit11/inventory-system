@@ -32,12 +32,11 @@
                             <th scope="col">วันที่ผลิต</th>
                             <th scope="col">วันหมดอายุ</th>
                             <th scope="col">สถานะ</th>
-                            <th scope="col" class="text-center" width="180px">การดำเนินการ</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($batches as $batch)
-                            <tr>
+                            <tr style="cursor:pointer;" onclick="window.location='{{ route('batches.show', $batch->id) }}'">
                                 <td>{{ $loop->iteration + ($batches->currentPage() - 1) * $batches->perPage() }}</td>
                                 <td>{{ $batch->product->name ?? '-' }} ({{ $batch->product->product_code ?? '-' }})</td>
                                 <td>{{ $batch->batch_number }}</td>
@@ -76,24 +75,6 @@
                                     <span class="badge rounded-pill px-3 py-2 {{ $batch->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
                                         {{ $batch->status == 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน' }}
                                     </span>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{ route('batches.barcode', $batch->id) }}" class="btn btn-info btn-sm me-1 rounded-pill" title="พิมพ์บาร์โค้ด">
-                                        <i class="fas fa-barcode"></i> บาร์โค้ด
-                                    </a>
-                                    <a href="{{ route('batches.show', $batch->id) }}" class="btn btn-secondary btn-sm me-1 rounded-pill" title="ดูรายละเอียด">
-                                        <i class="fas fa-eye"></i> ดู
-                                    </a>
-                                    <a href="{{ route('batches.edit', $batch->id) }}" class="btn btn-warning btn-sm me-1 rounded-pill" title="แก้ไข">
-                                        <i class="fas fa-edit"></i> แก้ไข
-                                    </a>
-                                    <form action="{{ route('batches.destroy', $batch->id) }}" method="POST" class="d-inline" onsubmit="return confirm('คุณแน่ใจหรือไม่ที่จะลบล็อตสินค้านี้? การดำเนินการนี้ไม่สามารถย้อนกลับได้!');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm rounded-pill" title="ลบ">
-                                            <i class="fas fa-trash-alt"></i> ลบ
-                                        </button>
-                                    </form>
                                 </td>
                             </tr>
                         @empty
