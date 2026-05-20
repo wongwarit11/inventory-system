@@ -31,13 +31,13 @@
                     value="{{ request('search') }}">
             </div>
             <div class="col-md-4">
-                <label class="form-label">ผู้ผลิต</label>
-                <select name="manufacturer_id" class="form-select">
+                <label class="form-label">ผู้จัดจำหน่าย</label>
+                <select name="supplier_id" class="form-select">
                     <option value="">-- ทั้งหมด --</option>
-                    @foreach($manufacturers as $manufacturer)
-                        <option value="{{ $manufacturer->id }}" 
-                            {{ request('manufacturer_id') == $manufacturer->id ? 'selected' : '' }}>
-                            {{ $manufacturer->name }}
+                    @foreach($suppliers as $supplier)
+                        <option value="{{ $supplier->id }}" 
+                            {{ request('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                            {{ $supplier->name }}
                         </option>
                     @endforeach
                 </select>
@@ -65,7 +65,7 @@
                             <th>รหัสสินค้า</th>
                             <th>ชื่อสินค้า</th>
                             <th>หมวดหมู่</th>
-                            <th>ผู้ผลิต</th>
+                            <th>ผู้จัดจำหน่าย</th>
                             <th>ประเภทสินค้า</th>
                             <th>หน่วยนับ</th>
                             <th>ราคาต้นทุน (ต่อหน่วย)</th>
@@ -81,7 +81,7 @@
                                 <td>{{ $product->product_code }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->category->name ?? '-' }}</td>
-                                <td>{{ $product->manufacturer->name ?? '-' }}</td>
+                                <td>{{ $product->supplier->name ?? '-' }}</td>
                                 <td>{{ $product->productType->name ?? '-' }}</td>
                                 <td>{{ $product->unit }}</td>
                                 <td>{{ number_format($product->cost_price, 2) }}</td> 

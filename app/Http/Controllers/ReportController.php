@@ -136,14 +136,14 @@ class ReportController extends Controller
         }
 
         // กรองผู้ผลิต
-        if ($request->filled('manufacturer_id')) {
-            $query->where('manufacturer_id', $request->input('manufacturer_id'));
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->supplier_id);
         }
 
         $lowStockProducts = $query->orderBy('name')->paginate(15);
-        $manufacturers = \App\Models\Manufacturer::orderBy('name')->get();
+        $suppliers = \App\Models\Supplier::orderBy('name')->get();
 
-        return view('reports.low_stock_products_report', compact('lowStockProducts', 'manufacturers'));
+        return view('reports.low_stock_products_report', compact('lowStockProducts', 'suppliers'));
     }
 
     public function exportLowStock(Request $request)
