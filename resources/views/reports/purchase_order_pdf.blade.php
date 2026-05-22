@@ -39,8 +39,10 @@ body { font-size: 14px; color: #2C2C2A; padding: 30px; }
       <img src="{{ public_path('images/hospital_logo.png') }}" style="width: 56px; height: 56px;">
     </td>
     <td style="vertical-align: middle; padding-left: 10px;">
-      <div class="hospital-name">โรงพยาบาลวัดห้วยปลากั้งเพื่อสังคม</div>
-      <div class="hospital-sub">Wat Huay Pakang Hospital for Society</div>
+      <div class="hospital-name">มูลนิธิพระอาจารย์พบโชคเพื่อสังคม</div>
+      <div class="hospital-sub">เลขที่: 553 หมู่ 14 ต.บ้านดู่ อ.เมืองเชียงราย จ.เชียงราย 57100</div>
+      <div class="hospital-sub">เลขประจำตัวผู้เสียภาษี: 099-3-00048408-8</div>
+      <div class="hospital-sub">เบอร์โทร: 052 029 888</div>
     </td>
     <td style="text-align: right; vertical-align: middle;">
       <div class="doc-title">ใบสั่งซื้อพัสดุ</div>
@@ -53,18 +55,6 @@ body { font-size: 14px; color: #2C2C2A; padding: 30px; }
 
 <table style="width: 100%; border-collapse: separate; border-spacing: 10px 0; margin-bottom: 14px;">
   <tr>
-    <td style="width: 50%; vertical-align: top;">
-      <div class="info-box">
-        <div class="info-box-header"><span class="info-box-header-text">ข้อมูลผู้สั่งซื้อ</span></div>
-        <div class="info-box-body">
-          <table style="width: 100%;">
-            <tr><td class="info-key">ชื่อ</td><td class="info-val">โรงพยาบาลวัดห้วยปลากั้งเพื่อสังคม</td></tr>
-            <tr><td class="info-key" style="vertical-align: top;">ที่อยู่</td><td class="info-val">553/11 ม.14 ต.บ้านดู่ อ.เมืองเชียงราย จ.เชียงราย 57100</td></tr>
-            <tr><td class="info-key">เบอร์โทร</td><td class="info-val">052 029 888</td></tr>
-          </table>
-        </div>
-      </div>
-    </td>
     <td style="width: 50%; vertical-align: top;">
       <div class="info-box">
         <div class="info-box-header"><span class="info-box-header-text">ข้อมูลผู้จัดจำหน่าย</span></div>
@@ -141,7 +131,7 @@ body { font-size: 14px; color: #2C2C2A; padding: 30px; }
 <table style="width: 100%; margin-top: 16px; border-top: 1px solid #D3D1C7; padding-top: 8px;">
   <tr>
     <td style="font-size: 10px; color: #888780; text-align: left;">พิมพ์เมื่อ: {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->format('d/m/Y H:i') }} น.</td>
-    <td style="font-size: 10px; color: #888780; text-align: center;">ระบบจัดการคลังพัสดุ — โรงพยาบาลวัดห้วยปลากั้งเพื่อสังคม</td>
+    <td style="font-size: 10px; color: #888780; text-align: center;">ระบบจัดการคลังพัสดุ — มูลนิธิพระอาจารย์พบโชคเพื่อสังคม</td>
     <td style="font-size: 10px; color: #888780; text-align: right;">หน้า 1/1</td>
   </tr>
 </table>
