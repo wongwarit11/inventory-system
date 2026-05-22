@@ -3,596 +3,562 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title') - ระบบสต็อกยาและเวชภัณฑ์</title>
 
-    <title>@yield('title') - {{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome (สำหรับ Icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7f6;
-        }
-        .navbar {
-            background-color: #007bff; /* Primary color for Navbar */
-            box-shadow: 0 2px 4px rgba(0,0,0,.08);
-        }
-        .navbar-brand, .nav-link {
-            color: #ffffff !important;
-        }
-        .navbar-brand:hover, .nav-link:hover {
-            color: #e2e6ea !important;
-        }
-        /* Sidebar styles for desktop */
-        .sidebar-desktop {
-            background-color: #343a40; /* Dark sidebar */
-            color: #ffffff;
-            min-height: 100vh;
-            padding-top: 20px;
-            position: fixed;
-            width: 250px;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            box-shadow: 2px 0 5px rgba(0,0,0,.1);
-            z-index: 1020; /* Below fixed navbar */
-        }
-        .sidebar-desktop .nav-link {
-            color: #adb5bd;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            transition: all 0.2s ease-in-out;
-        }
-        .sidebar-desktop .nav-link:hover, .sidebar-desktop .nav-link.active {
-            background-color: #007bff;
-            color: #ffffff;
-        }
-        .sidebar-desktop .nav-link.active {
-            font-weight: bold;
-        }
-        .sidebar-desktop .nav-link i {
-            margin-right: 10px;
-        }
-        .sidebar-desktop .sidebar-heading {
-            color: #ffffff !important;
-            padding-left: 15px;
-            padding-right: 15px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; }
 
-        /* Main content styles for desktop */
-        .main-content {
-            margin-left: 250px; /* Adjust content to the right of sidebar */
-            padding: 20px;
-            padding-top: 110px !important; /* Ensure content is below fixed navbar */
-        }
-
-        /* Custom styles for alerts */
-        .alert-custom {
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            padding: 1rem 1.5rem;
+        /* ===== TOP NAVBAR ===== */
+        .nav-top {
+            background: #185FA5;
+            height: 50px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1050;
         }
-        .alert-custom .alert-icon {
-            font-size: 1.5rem;
-            margin-right: 1rem;
+        .nav-brand {
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
         }
-        .alert-custom.alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
-        }
-        .alert-custom.alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
-        }
-        .alert-custom .btn-close {
-            margin-left: auto;
-        }
-
-        /* Responsive adjustments for forms/cards */
-        .container-fluid > .container { /* Target nested containers for forms */
-            max-width: 800px; /* Max width for better readability on large screens */
-        }
-        .card {
-            border-radius: 1rem; /* Rounded card corners */
-        }
-        .form-control.rounded-pill, .form-select.rounded-pill {
-            border-radius: 2rem !important; /* More rounded input and select fields */
-        }
-        .btn.rounded-pill {
-            border-radius: 2rem !important;
-        }
-        /* Custom Tooltip Styles - GLOBAL */
-        .custom-tooltip-icon {
-            cursor: help;
-            color: #6c757d; /* Grey color for icon */
-        }
-        /* Spinner for Loading State - GLOBAL */
-        .spinner-border-sm {
-            width: 1rem;
-            height: 1rem;
-            border-width: 0.15em;
-        }
-
-        /* Media queries for responsiveness */
-        @media (max-width: 767.98px) { /* For screens smaller than md (768px) */
-            .sidebar-desktop {
-                display: none; /* Hide desktop sidebar on mobile */
-            }
-
-            .main-content {
-                margin-left: 0; /* No margin on mobile */
-                padding-top: 70px !important; /* Adjust padding for mobile navbar height */
-            }
-
-            .navbar-toggler-offcanvas {
-                display: block; /* Show toggler for offcanvas */
-            }
-            .navbar-brand {
-                margin-left: 10px; /* Adjust brand position */
-            }
-        }
-        @media (min-width: 768px) { /* For screens md (768px) and larger */
-            .navbar-toggler-offcanvas {
-                display: none; /* Hide offcanvas toggler on desktop */
-            }
-        }
-
-        /* Offcanvas specific styles (Bootstrap handles most of it) */
-        .offcanvas {
-            background-color: #343a40; /* Match sidebar background */
-            color: #ffffff;
-        }
-        .offcanvas .offcanvas-header {
-            border-bottom: 1px solid rgba(255,255,255,.1);
-            padding: 1rem 1.25rem;
-        }
-        .offcanvas .offcanvas-title {
-            color: #ffffff;
-            font-weight: bold;
-        }
-        .offcanvas .btn-close {
-            filter: invert(1); /* Make close button white */
-        }
-        .offcanvas .nav-link {
-            color: #adb5bd;
-            padding: 10px 15px;
+        .nav-brand:hover { color: #B5D4F4; }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .search-btn {
+            background: rgba(255,255,255,0.15);
+            border: 0.5px solid rgba(255,255,255,0.25);
             border-radius: 8px;
-            margin-bottom: 5px;
-            transition: all 0.2s ease-in-out;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
         }
-        .offcanvas .nav-link:hover, .offcanvas .nav-link.active {
-            background-color: #007bff;
-            color: #ffffff;
+        .search-btn:hover { background: rgba(255,255,255,0.25); }
+        .user-dropdown { position: relative; }
+        .user-btn {
+            background: rgba(255,255,255,0.15);
+            border: 0.5px solid rgba(255,255,255,0.25);
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
         }
-        .offcanvas .nav-link.active {
-            font-weight: bold;
+        .user-btn:hover { background: rgba(255,255,255,0.25); }
+        .avatar {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: #B5D4F4;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 500; color: #0C447C;
+            flex-shrink: 0;
         }
-        .offcanvas .nav-link i {
-            margin-right: 10px;
+        .dropdown-menu-custom {
+            position: absolute;
+            right: 0; top: calc(100% + 6px);
+            background: white;
+            border: 0.5px solid #D3D1C7;
+            border-radius: 10px;
+            min-width: 180px;
+            overflow: hidden;
+            z-index: 1060;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .offcanvas .sidebar-heading {
-            color: #ffffff !important;
-            padding-left: 15px;
-            padding-right: 15px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
+        .dropdown-menu-custom.open { display: block; }
+        .drop-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #2C2C2A;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .drop-item:hover { background: #f0f4f8; color: #185FA5; }
+        .drop-item.danger { color: #A32D2D; }
+        .drop-item.danger:hover { background: #FCEBEB; }
+        .drop-divider { border-top: 0.5px solid #E0DDD5; }
+        .drop-role {
+            padding: 8px 14px;
+            font-size: 11px;
+            color: #888780;
+            background: #F7F5EF;
+            border-bottom: 0.5px solid #E0DDD5;
+        }
+
+        /* ===== SUB NAVBAR ===== */
+        .nav-sub {
+            background: #0C447C;
+            height: 42px;
+            display: flex;
+            align-items: stretch;
+            padding: 0 20px;
+            position: fixed;
+            top: 50px; left: 0; right: 0;
+            z-index: 1045;
+            overflow-x: auto;
+            overflow-y: visible;
+        }
+        .nav-sub::-webkit-scrollbar { display: none; }
+        .nav-sub-item {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .nav-sub-item:hover { color: white; background: rgba(255,255,255,0.07); }
+        .nav-sub-item.active { color: white; border-bottom: 2px solid #85B7EB; font-weight: 500; }
+
+        /* ===== DROPDOWN SUBMENU ===== */
+        .nav-sub-item { position: relative; }
+        .nav-sub-dropdown {
+            position: fixed;
+            background: white;
+            border: 0.5px solid #D3D1C7;
+            border-radius: 10px;
+            min-width: 220px;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 6px 0;
+        }
+        .nav-sub-dropdown.show { display: block; }
+        .nav-sub-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            font-size: 13px;
+            color: #2C2C2A;
+            text-decoration: none;
+        }
+        .nav-sub-dropdown a:hover { background: #f0f4f8; color: #185FA5; }
+        .nav-sub-dropdown a.active { color: #185FA5; font-weight: 500; background: #E6F1FB; }
+        .nav-sub-dropdown .drop-section {
+            font-size: 10px;
+            color: #888780;
+            padding: 8px 16px 4px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
+            border-top: 0.5px solid #E0DDD5;
+            margin-top: 4px;
         }
+
+        /* ===== FIX Z-INDEX ===== */
+        .nav-top { z-index: 1050; }
+        .nav-sub { z-index: 1040; overflow-y: visible !important; }
+        .nav-sub-dropdown { z-index: 1039; }
+        .main-content { z-index: 0; position: relative; }
+        .card { position: relative; z-index: 0; }
+        .table-responsive { position: relative; z-index: 0; }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-top: 92px;
+            padding: 20px;
+            min-height: calc(100vh - 92px);
+            position:relative;
+            z-index: 1;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert-custom {
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .alert-custom.alert-success { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #C0DD97; }
+        .alert-custom.alert-danger { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F7C1C1; }
+
+        /* ===== CARDS & FORMS ===== */
+        .card { border-radius: 12px; border: 0.5px solid #D3D1C7; }
+        .form-control.rounded-pill, .form-select.rounded-pill { border-radius: 2rem !important; }
+        .btn.rounded-pill { border-radius: 2rem !important; }
+
+        /* ===== MOBILE ===== */
+        .mobile-menu-btn { display: none; }
+        .mobile-sidebar {
+            position: fixed;
+            top: 0; left: -280px;
+            width: 280px; height: 100vh;
+            background: #0C447C;
+            z-index: 1070;
+            transition: left 0.3s;
+            overflow-y: auto;
+        }
+        .mobile-sidebar.open { left: 0; }
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1065;
+            display: none;
+        }
+        .mobile-overlay.open { display: block; }
+        .mobile-nav-link {
+            color: rgba(255,255,255,0.75);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 2px 8px;
+        }
+        .mobile-nav-link:hover, .mobile-nav-link.active { background: rgba(255,255,255,0.15); color: white; }
+        .mobile-section-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 12px 16px 4px;
+        }
+
+        @media (max-width: 767px) {
+            .mobile-menu-btn { display: flex; }
+            .nav-sub { display: none; }
+            .main-content { margin-top: 50px; padding: 12px; }
+            .search-btn span { display: none; }
+        }
+
+        @media (min-width: 768px) {
+            .mobile-sidebar { display: none; }
+        }
+
+        /* ===== SPINNER ===== */
+        .spinner-border-sm { width: 1rem; height: 1rem; border-width: 0.15em; }
     </style>
-    @stack('styles') {{-- สำหรับ CSS เพิ่มเติมที่ต้องการจากแต่ละหน้า --}}
+    @stack('styles')
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top">
-            <div class="container-fluid">
-                {{-- Toggler for Offcanvas Sidebar (visible on mobile) --}}
-                <button class="navbar-toggler-offcanvas btn btn-link text-white me-2 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Toggle navigation">
-                    <i class="fas fa-bars fa-lg"></i>
-                </button>
 
-                <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <i class="fas fa-warehouse me-2"></i> {{ config('app.name', 'ระบบจัดการคลังสินค้า') }}
+{{-- TOP NAVBAR --}}
+<div class="nav-top">
+    <div style="display:flex;align-items:center;gap:10px;">
+        <button class="mobile-menu-btn btn btn-link text-white p-0" onclick="toggleMobileSidebar()" style="font-size:18px;">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a class="nav-brand" href="{{ url('/') }}">
+            <i class="fas fa-hospital-alt"></i>
+            ระบบสต็อกยาและเวชภัณฑ์โรงพยาบาล
+        </a>
+    </div>
+    <div class="nav-right">
+        <div class="search-btn">
+            <i class="fas fa-search"></i>
+            <span>ค้นหาในระบบ...</span>
+        </div>
+        @auth
+        <div class="user-dropdown">
+            <div class="user-btn" onclick="toggleUserMenu()">
+                <div class="avatar">
+                    {{ strtoupper(substr(Auth::user()->fullname ?? Auth::user()->username, 0, 2)) }}
+                </div>
+                <span>{{ Auth::user()->fullname ?? Auth::user()->username }}</span>
+                <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.8;"></i>
+            </div>
+            <div class="dropdown-menu-custom" id="userDropdown">
+                <div class="drop-role">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    บทบาท: {{ ucfirst(Auth::user()->role) }}
+                </div>
+                <a class="drop-item" href="#">
+                    <i class="fas fa-user" style="width:16px;color:#5F5E5A;"></i> โปรไฟล์
                 </a>
-                {{-- Default Navbar Toggler (can be hidden if offcanvas is primary mobile nav) --}}
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-                        {{-- สามารถเพิ่มเมนูด้านซ้ายได้ที่นี่ --}}
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <i class="fas fa-user-circle me-2"></i> {{ Auth::user()->fullname ?? Auth::user()->username }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fas fa-id-badge me-2"></i> บทบาท: {{ ucfirst(Auth::user()->role) }}
-                                    </a>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        <i class="fas fa-sign-out-alt me-2"></i> {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
+                <a class="drop-item" href="#">
+                    <i class="fas fa-key" style="width:16px;color:#5F5E5A;"></i> เปลี่ยนรหัสผ่าน
+                </a>
+                <div class="drop-divider"></div>
+                <a class="drop-item danger" href="{{ route('logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt" style="width:16px;"></i> ออกจากระบบ
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
             </div>
-        </nav>
+        </div>
+        @endauth
+    </div>
+</div>
 
-        <div class="d-flex">
-            {{-- Desktop Sidebar (visible on desktop, hidden on mobile) --}}
-            <div class="sidebar-desktop d-none d-md-block">
-                <h5 class="text-white text-center mb-4">เมนูหลัก</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <h6 class="sidebar-heading">
-                            <span>ข้อมูลหลัก</span>
-                        </h6>
-                    </li>
-                    @if (Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'manager'))
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('departments.*') ? 'active' : '' }}" href="{{ route('departments.index') }}">
-                                <i class="fas fa-building"></i> แผนก (Departments)
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
-                                <i class="fas fa-tags"></i> หมวดหมู่ (Categories)
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">
-                                <i class="fas fa-truck"></i> ผู้จัดจำหน่าย (Suppliers)
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('manufacturers.*') ? 'active' : '' }}" href="{{ route('manufacturers.index') }}">
-                                <i class="fas fa-industry"></i> ผู้ผลิต (Manufacturers)
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}">
-                                <i class="fas fa-map-marker-alt"></i> ตำแหน่งสินค้า
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('product-types.*') ? 'active' : '' }}" href="{{ route('product-types.index') }}">
-                                <i class="fas fa-boxes"></i> ประเภทสินค้า (Product Types)
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                                <i class="fas fa-box"></i> สินค้า (Products)
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('batches.*') ? 'active' : '' }}" href="{{ route('batches.index') }}">
-                                <i class="fas fa-boxes"></i> ล็อตสินค้า (Batches)
-                            </a>
-                        </li>
-                    @endif
-                    <li class="nav-item">
-                        <h6 class="sidebar-heading">
-                            <span>การจัดการสต็อก</span>
-                        </h6>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('stock_transactions.index') ? 'active' : '' }}" href="{{ route('stock_transactions.index') }}">
-                            <i class="fas fa-history"></i> รายการสต็อก
-                        </a>
-                    </li>
-                    @if (Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'manager'))
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('stock_transactions.receive.create') ? 'active' : '' }}" href="{{ route('stock_transactions.receive.create') }}">
-                                <i class="fas fa-arrow-alt-circle-down"></i> รับเข้าสินค้า
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('stock_transactions.issue.create') ? 'active' : '' }}" href="{{ route('stock_transactions.issue.create') }}">
-                                <i class="fas fa-arrow-alt-circle-up"></i> จ่ายออกสินค้า
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('stock_transactions.adjust.create') ? 'active' : '' }}" href="{{ route('stock_transactions.adjust.create') }}">
-                                <i class="fas fa-sliders-h"></i> ปรับปรุงสต็อก
-                            </a>
-                        </li>
-                    @endif
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('scanner.index') ? 'active' : '' }}" href="{{ route('scanner.index') }}">
-                            <i class="fas fa-barcode"></i> สแกนบาร์โค้ด
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <h6 class="sidebar-heading">
-                            <span>การจัดการใบขอเบิก</span>
-                        </h6>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('requisitions.*') ? 'active' : '' }}" href="{{ route('requisitions.index') }}">
-                            <i class="fas fa-file-invoice"></i> รายการใบขอเบิก
-                        </a>
-                    </li>
-                    @if (Auth::check() && Auth::user()->role === 'admin')
-                        <li class="nav-item">
-                            <h6 class="sidebar-heading">
-                                <span>รายงาน</span>
-                            </h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('reports.stock') ? 'active' : '' }}" href="{{ route('reports.stock') }}">
-                                <i class="fas fa-chart-pie"></i> รายงานสต็อก
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('reports.requisition') ? 'active' : '' }}" href="{{ route('reports.requisition') }}">
-                                <i class="fas fa-clipboard-list"></i> รายงานการเบิก
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('reports.low_stock_products') ? 'active' : '' }}" href="{{ route('reports.low_stock_products') }}">
-                                <i class="fas fa-exclamation-triangle"></i> สินค้าสต็อกต่ำ
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('reports.expiring_batches') ? 'active' : '' }}" href="{{ route('reports.expiring_batches') }}">
-                                <i class="fas fa-calendar-times"></i> ล็อตใกล้หมดอายุ
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('reports.pending_requisitions') ? 'active' : '' }}" href="{{ route('reports.pending_requisitions') }}">
-                                <i class="fas fa-hourglass-half"></i> ใบขอเบิกค้างอนุมัติ
-                            </a>
-                        </li>
-                    @endif
-                    <li class="nav-item">
-                        <h6 class="sidebar-heading">
-                            <span>ตั้งค่าระบบ</span>
-                        </h6>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                            <i class="fas fa-users-cog"></i> จัดการผู้ใช้งาน
-                        </a>
-                    </li>
-                </ul>
-            </div>
+{{-- SUB NAVBAR --}}
+<div class="nav-sub">
+    <a class="nav-sub-item {{ Request::routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+        <i class="fas fa-tachometer-alt" style="font-size:13px;"></i> Dashboard
+    </a>
 
-            {{-- Offcanvas Sidebar (visible on mobile, hidden on desktop) --}}
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasSidebarLabel">เมนูหลัก</h5>
-                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <h6 class="sidebar-heading">
-                                <span>ข้อมูลหลัก</span>
-                            </h6>
-                        </li>
-                        @if (Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'manager'))
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('departments.*') ? 'active' : '' }}" href="{{ route('departments.index') }}">
-                                    <i class="fas fa-building"></i> แผนก (Departments)
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
-                                    <i class="fas fa-tags"></i> หมวดหมู่ (Categories)
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">
-                                    <i class="fas fa-truck"></i> ผู้จัดจำหน่าย (Suppliers)
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('manufacturers.*') ? 'active' : '' }}" href="{{ route('manufacturers.index') }}">
-                                    <i class="fas fa-industry"></i> ผู้ผลิต (Manufacturers)
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}">
-                                    <i class="fas fa-map-marker-alt"></i> ตำแหน่งสินค้า
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('product-types.*') ? 'active' : '' }}" href="{{ route('product-types.index') }}">
-                                    <i class="fas fa-boxes"></i> ประเภทสินค้า (Product Types)
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                                    <i class="fas fa-box"></i> สินค้า (Products)
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('batches.*') ? 'active' : '' }}" href="{{ route('batches.index') }}">
-                                    <i class="fas fa-boxes"></i> ล็อตสินค้า (Batches)
-                                </a>
-                            </li>
-                        @endif
-                        <li class="nav-item">
-                            <h6 class="sidebar-heading">
-                                <span>การจัดการสต็อก</span>
-                            </h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('stock_transactions.index') ? 'active' : '' }}" href="{{ route('stock_transactions.index') }}">
-                                <i class="fas fa-history"></i> รายการสต็อก
-                            </a>
-                        </li>
-                        @if (Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'manager'))
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('stock_transactions.receive.create') ? 'active' : '' }}" href="{{ route('stock_transactions.receive.create') }}">
-                                    <i class="fas fa-arrow-alt-circle-down"></i> รับเข้าสินค้า
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('stock_transactions.issue.create') ? 'active' : '' }}" href="{{ route('stock_transactions.issue.create') }}">
-                                    <i class="fas fa-arrow-alt-circle-up"></i> จ่ายออกสินค้า
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('stock_transactions.adjust.create') ? 'active' : '' }}" href="{{ route('stock_transactions.adjust.create') }}">
-                                    <i class="fas fa-sliders-h"></i> ปรับปรุงสต็อก
-                                </a>
-                            </li>
-                        @endif
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('scanner.index') ? 'active' : '' }}" href="{{ route('scanner.index') }}">
-                                <i class="fas fa-barcode"></i> สแกนบาร์โค้ด
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <h6 class="sidebar-heading">
-                                <span>การจัดการใบขอเบิก</span>
-                            </h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('requisitions.*') ? 'active' : '' }}" href="{{ route('requisitions.index') }}">
-                                <i class="fas fa-file-invoice"></i> รายการใบขอเบิก
-                            </a>
-                        </li>
-                        @if (Auth::check() && Auth::user()->role === 'admin')
-                            <li class="nav-item">
-                                <h6 class="sidebar-heading">
-                                    <span>รายงาน</span>
-                                </h6>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('reports.stock') ? 'active' : '' }}" href="{{ route('reports.stock') }}">
-                                    <i class="fas fa-chart-pie"></i> รายงานสต็อก
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('reports.requisition') ? 'active' : '' }}" href="{{ route('reports.requisition') }}">
-                                    <i class="fas fa-clipboard-list"></i> รายงานการเบิก
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('reports.low_stock_products') ? 'active' : '' }}" href="{{ route('reports.low_stock_products') }}">
-                                    <i class="fas fa-exclamation-triangle"></i> สินค้าสต็อกต่ำ
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('reports.expiring_batches') ? 'active' : '' }}" href="{{ route('reports.expiring_batches') }}">
-                                    <i class="fas fa-calendar-times"></i> ล็อตใกล้หมดอายุ
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ Request::routeIs('reports.pending_requisitions') ? 'active' : '' }}" href="{{ route('reports.pending_requisitions') }}">
-                                    <i class="fas fa-hourglass-half"></i> ใบขอเบิกค้างอนุมัติ
-                                </a>
-                            </li>
-                        @endif
-                        <li class="nav-item">
-                            <h6 class="sidebar-heading">
-                                <span>ตั้งค่าระบบ</span>
-                            </h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                                <i class="fas fa-users-cog"></i> จัดการผู้ใช้งาน
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    @if(Auth::check() && in_array(Auth::user()->role, ['admin','manager']))
+    <div class="nav-sub-item {{ Request::routeIs('departments.*','categories.*','suppliers.*','manufacturers.*','locations.*','product-types.*','products.*','batches.*') ? 'active' : '' }}">
+        <span style="display:flex;align-items:center;gap:6px;height:100%;padding:0 16px;cursor:pointer;">
+            <i class="fas fa-database" style="font-size:13px;"></i> ข้อมูลหลัก
+            <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+        </span>
+        <div class="nav-sub-dropdown">
+            <a href="{{ route('departments.index') }}" class="{{ Request::routeIs('departments.*') ? 'active' : '' }}">
+                <i class="fas fa-building" style="width:16px;color:#5F5E5A;"></i> แผนก (Departments)
+            </a>
+            <a href="{{ route('categories.index') }}" class="{{ Request::routeIs('categories.*') ? 'active' : '' }}">
+                <i class="fas fa-tags" style="width:16px;color:#5F5E5A;"></i> หมวดหมู่ (Categories)
+            </a>
+            <a href="{{ route('suppliers.index') }}" class="{{ Request::routeIs('suppliers.*') ? 'active' : '' }}">
+                <i class="fas fa-truck" style="width:16px;color:#5F5E5A;"></i> ผู้จัดจำหน่าย (Suppliers)
+            </a>
+            <a href="{{ route('manufacturers.index') }}" class="{{ Request::routeIs('manufacturers.*') ? 'active' : '' }}">
+                <i class="fas fa-industry" style="width:16px;color:#5F5E5A;"></i> ผู้ผลิต (Manufacturers)
+            </a>
+            <a href="{{ route('locations.index') }}" class="{{ Request::routeIs('locations.*') ? 'active' : '' }}">
+                <i class="fas fa-map-marker-alt" style="width:16px;color:#5F5E5A;"></i> ตำแหน่งสินค้า
+            </a>
+            <a href="{{ route('product-types.index') }}" class="{{ Request::routeIs('product-types.*') ? 'active' : '' }}">
+                <i class="fas fa-layer-group" style="width:16px;color:#5F5E5A;"></i> ประเภทสินค้า (Product Types)
+            </a>
+            <a href="{{ route('products.index') }}" class="{{ Request::routeIs('products.*') ? 'active' : '' }}">
+                <i class="fas fa-box" style="width:16px;color:#5F5E5A;"></i> สินค้า (Products)
+            </a>
+            <a href="{{ route('batches.index') }}" class="{{ Request::routeIs('batches.*') ? 'active' : '' }}">
+                <i class="fas fa-boxes" style="width:16px;color:#5F5E5A;"></i> ล็อตสินค้า (Batches)
+            </a>
+        </div>
+    </div>
+    @endif
 
-            <main class="py-4 main-content">
-                {{-- ส่วนสำหรับแสดงข้อความแจ้งเตือน Success/Error --}}
-                <div class="container">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-custom alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle alert-icon"></i>
-                            <div>{{ session('success') }}</div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-custom alert-dismissible fade show" role="alert">
-                            <i class="fas fa-times-circle alert-icon"></i>
-                            <div>{{ session('error') }}</div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-                </div>
-
-                @yield('content')
-            </main>
+    <div class="nav-sub-item {{ Request::routeIs('stock_transactions.*') ? 'active' : '' }}">
+        <span style="display:flex;align-items:center;gap:6px;height:100%;padding:0 16px;cursor:pointer;">
+            <i class="fas fa-boxes" style="font-size:13px;"></i> การจัดการสต็อก
+            <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+        </span>
+        <div class="nav-sub-dropdown">
+            <a href="{{ route('stock_transactions.index') }}" class="{{ Request::routeIs('stock_transactions.index') ? 'active' : '' }}">
+                <i class="fas fa-history" style="width:16px;color:#5F5E5A;"></i> รายการสต็อก
+            </a>
+            @if(Auth::check() && in_array(Auth::user()->role, ['admin','manager']))
+            <a href="{{ route('stock_transactions.receive.create') }}" class="{{ Request::routeIs('stock_transactions.receive.*') ? 'active' : '' }}">
+                <i class="fas fa-arrow-circle-down" style="width:16px;color:#3B6D11;"></i> รับเข้าสินค้า
+            </a>
+            <a href="{{ route('stock_transactions.issue.create') }}" class="{{ Request::routeIs('stock_transactions.issue.*') ? 'active' : '' }}">
+                <i class="fas fa-arrow-circle-up" style="width:16px;color:#A32D2D;"></i> จ่ายออกสินค้า
+            </a>
+            <a href="{{ route('stock_transactions.adjust.create') }}" class="{{ Request::routeIs('stock_transactions.adjust.*') ? 'active' : '' }}">
+                <i class="fas fa-sliders-h" style="width:16px;color:#854F0B;"></i> ปรับปรุงสต็อก
+            </a>
+            @endif
+            <a href="{{ route('scanner.index') }}" class="{{ Request::routeIs('scanner.*') ? 'active' : '' }}">
+                <i class="fas fa-barcode" style="width:16px;color:#5F5E5A;"></i> สแกนบาร์โค้ด
+            </a>
         </div>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Bootstrap Tooltips globally
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
+    <div class="nav-sub-item {{ Request::routeIs('requisitions.*') ? 'active' : '' }}">
+        <span style="display:flex;align-items:center;gap:6px;height:100%;padding:0 16px;cursor:pointer;">
+            <i class="fas fa-file-invoice" style="font-size:13px;"></i> จัดการใบขอเบิก
+            <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+        </span>
+        <div class="nav-sub-dropdown">
+            <a href="{{ route('requisitions.index') }}" class="{{ Request::routeIs('requisitions.*') ? 'active' : '' }}">
+                <i class="fas fa-file-invoice" style="width:16px;color:#5F5E5A;"></i> รายการใบขอเบิก
+            </a>
+        </div>
+    </div>
+
+    @if(Auth::check() && Auth::user()->role === 'admin')
+    <div class="nav-sub-item {{ Request::routeIs('reports.*') ? 'active' : '' }}">
+        <span style="display:flex;align-items:center;gap:6px;height:100%;padding:0 16px;cursor:pointer;">
+            <i class="fas fa-chart-bar" style="font-size:13px;"></i> รายงาน
+            <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+        </span>
+        <div class="nav-sub-dropdown">
+            <a href="{{ route('reports.stock') }}" class="{{ Request::routeIs('reports.stock') ? 'active' : '' }}">
+                <i class="fas fa-chart-pie" style="width:16px;color:#5F5E5A;"></i> รายงานสต็อก
+            </a>
+            <a href="{{ route('reports.requisition') }}" class="{{ Request::routeIs('reports.requisition') ? 'active' : '' }}">
+                <i class="fas fa-clipboard-list" style="width:16px;color:#5F5E5A;"></i> รายงานการเบิก
+            </a>
+            <a href="{{ route('reports.low_stock_products') }}" class="{{ Request::routeIs('reports.low_stock_products') ? 'active' : '' }}">
+                <i class="fas fa-exclamation-triangle" style="width:16px;color:#A32D2D;"></i> สินค้าสต็อกต่ำ
+            </a>
+            <a href="{{ route('reports.expiring_batches') }}" class="{{ Request::routeIs('reports.expiring_batches') ? 'active' : '' }}">
+                <i class="fas fa-calendar-times" style="width:16px;color:#854F0B;"></i> ล็อตใกล้หมดอายุ
+            </a>
+            <a href="{{ route('reports.pending_requisitions') }}" class="{{ Request::routeIs('reports.pending_requisitions') ? 'active' : '' }}">
+                <i class="fas fa-hourglass-half" style="width:16px;color:#5F5E5A;"></i> ใบขอเบิกค้างอนุมัติ
+            </a>
+        </div>
+    </div>
+
+    <div class="nav-sub-item {{ Request::routeIs('users.*') ? 'active' : '' }}">
+        <span style="display:flex;align-items:center;gap:6px;height:100%;padding:0 16px;cursor:pointer;">
+            <i class="fas fa-cog" style="font-size:13px;"></i> ตั้งค่าระบบ
+            <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.7;"></i>
+        </span>
+        <div class="nav-sub-dropdown">
+            <a href="{{ route('users.index') }}" class="{{ Request::routeIs('users.*') ? 'active' : '' }}">
+                <i class="fas fa-users-cog" style="width:16px;color:#5F5E5A;"></i> จัดการผู้ใช้งาน
+            </a>
+        </div>
+    </div>
+    @endif
+</div>
+
+{{-- MOBILE SIDEBAR OVERLAY --}}
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileSidebar()"></div>
+
+{{-- MOBILE SIDEBAR --}}
+<div class="mobile-sidebar" id="mobileSidebar">
+    <div style="padding:16px;border-bottom:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;">
+        <span style="color:white;font-size:14px;font-weight:500;"><i class="fas fa-hospital-alt me-2"></i>เมนูหลัก</span>
+        <button onclick="toggleMobileSidebar()" class="btn btn-link text-white p-0"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="padding:8px 0;">
+        <a class="mobile-nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+            <i class="fas fa-tachometer-alt" style="width:18px;"></i> Dashboard
+        </a>
+
+        @if(Auth::check() && in_array(Auth::user()->role, ['admin','manager']))
+        <div class="mobile-section-title">ข้อมูลหลัก</div>
+        <a class="mobile-nav-link {{ Request::routeIs('departments.*') ? 'active' : '' }}" href="{{ route('departments.index') }}"><i class="fas fa-building" style="width:18px;"></i> แผนก</a>
+        <a class="mobile-nav-link {{ Request::routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}"><i class="fas fa-tags" style="width:18px;"></i> หมวดหมู่</a>
+        <a class="mobile-nav-link {{ Request::routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}"><i class="fas fa-truck" style="width:18px;"></i> ผู้จัดจำหน่าย</a>
+        <a class="mobile-nav-link {{ Request::routeIs('manufacturers.*') ? 'active' : '' }}" href="{{ route('manufacturers.index') }}"><i class="fas fa-industry" style="width:18px;"></i> ผู้ผลิต</a>
+        <a class="mobile-nav-link {{ Request::routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}"><i class="fas fa-map-marker-alt" style="width:18px;"></i> ตำแหน่งสินค้า</a>
+        <a class="mobile-nav-link {{ Request::routeIs('product-types.*') ? 'active' : '' }}" href="{{ route('product-types.index') }}"><i class="fas fa-layer-group" style="width:18px;"></i> ประเภทสินค้า</a>
+        <a class="mobile-nav-link {{ Request::routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}"><i class="fas fa-box" style="width:18px;"></i> สินค้า</a>
+        <a class="mobile-nav-link {{ Request::routeIs('batches.*') ? 'active' : '' }}" href="{{ route('batches.index') }}"><i class="fas fa-boxes" style="width:18px;"></i> ล็อตสินค้า</a>
+        @endif
+
+        <div class="mobile-section-title">การจัดการสต็อก</div>
+        <a class="mobile-nav-link {{ Request::routeIs('stock_transactions.index') ? 'active' : '' }}" href="{{ route('stock_transactions.index') }}"><i class="fas fa-history" style="width:18px;"></i> รายการสต็อก</a>
+        @if(Auth::check() && in_array(Auth::user()->role, ['admin','manager']))
+        <a class="mobile-nav-link" href="{{ route('stock_transactions.receive.create') }}"><i class="fas fa-arrow-circle-down" style="width:18px;"></i> รับเข้าสินค้า</a>
+        <a class="mobile-nav-link" href="{{ route('stock_transactions.issue.create') }}"><i class="fas fa-arrow-circle-up" style="width:18px;"></i> จ่ายออกสินค้า</a>
+        <a class="mobile-nav-link" href="{{ route('stock_transactions.adjust.create') }}"><i class="fas fa-sliders-h" style="width:18px;"></i> ปรับปรุงสต็อก</a>
+        @endif
+        <a class="mobile-nav-link" href="{{ route('scanner.index') }}"><i class="fas fa-barcode" style="width:18px;"></i> สแกนบาร์โค้ด</a>
+
+        <div class="mobile-section-title">ใบขอเบิก</div>
+        <a class="mobile-nav-link {{ Request::routeIs('requisitions.*') ? 'active' : '' }}" href="{{ route('requisitions.index') }}"><i class="fas fa-file-invoice" style="width:18px;"></i> รายการใบขอเบิก</a>
+
+        @if(Auth::check() && Auth::user()->role === 'admin')
+        <div class="mobile-section-title">รายงาน</div>
+        <a class="mobile-nav-link" href="{{ route('reports.stock') }}"><i class="fas fa-chart-pie" style="width:18px;"></i> รายงานสต็อก</a>
+        <a class="mobile-nav-link" href="{{ route('reports.requisition') }}"><i class="fas fa-clipboard-list" style="width:18px;"></i> รายงานการเบิก</a>
+        <a class="mobile-nav-link" href="{{ route('reports.low_stock_products') }}"><i class="fas fa-exclamation-triangle" style="width:18px;"></i> สินค้าสต็อกต่ำ</a>
+        <a class="mobile-nav-link" href="{{ route('reports.expiring_batches') }}"><i class="fas fa-calendar-times" style="width:18px;"></i> ล็อตใกล้หมดอายุ</a>
+        <a class="mobile-nav-link" href="{{ route('reports.pending_requisitions') }}"><i class="fas fa-hourglass-half" style="width:18px;"></i> ใบขอเบิกค้างอนุมัติ</a>
+
+        <div class="mobile-section-title">ตั้งค่าระบบ</div>
+        <a class="mobile-nav-link {{ Request::routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}"><i class="fas fa-users-cog" style="width:18px;"></i> จัดการผู้ใช้งาน</a>
+        @endif
+    </div>
+</div>
+
+{{-- MAIN CONTENT --}}
+<main class="main-content">
+    <div class="container-fluid px-0">
+        @if(session('success'))
+        <div class="alert-custom alert-success alert-dismissible fade show mb-3" role="alert">
+            <i class="fas fa-check-circle"></i>
+            <div>{{ session('success') }}</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="alert-custom alert-danger alert-dismissible fade show mb-3" role="alert">
+            <i class="fas fa-times-circle"></i>
+            <div>{{ session('error') }}</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+    </div>
+    @yield('content')
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function toggleUserMenu() {
+    document.getElementById('userDropdown').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.user-dropdown')) {
+        const dd = document.getElementById('userDropdown');
+        if (dd) dd.classList.remove('open');
+    }
+});
+function toggleMobileSidebar() {
+    document.getElementById('mobileSidebar').classList.toggle('open');
+    document.getElementById('mobileOverlay').classList.toggle('open');
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function(el) { return new bootstrap.Tooltip(el); });
+
+    // Dropdown submenu with fixed positioning
+    document.querySelectorAll('.nav-sub-item > span').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const parent = this.closest('.nav-sub-item');
+            const dropdown = parent.querySelector('.nav-sub-dropdown');
+            if (!dropdown) return;
+
+            // ปิด dropdown อื่นทั้งหมด
+            document.querySelectorAll('.nav-sub-dropdown.show').forEach(function(d) {
+                if (d !== dropdown) d.classList.remove('show');
             });
 
-            // You can add more global JavaScript here if needed
+            if (dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            } else {
+                // คำนวณตำแหน่งจาก parent element
+                const rect = parent.getBoundingClientRect();
+                dropdown.style.top = rect.bottom + 'px';
+                dropdown.style.left = rect.left + 'px';
+                dropdown.classList.add('show');
+            }
         });
-    </script>
-    @stack('scripts') {{-- สำหรับ JavaScript เพิ่มเติมที่ต้องการจากแต่ละหน้า --}}
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-sub-item')) {
+            document.querySelectorAll('.nav-sub-dropdown.show').forEach(function(d) {
+                d.classList.remove('show');
+            });
+        }
+    });
+});
+</script>
+@stack('scripts')
 </body>
 </html>
