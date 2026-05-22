@@ -100,8 +100,8 @@ body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
     <tr>
       <th style="width: 36px; text-align: center;">#</th>
       <th style="text-align: left;">ชื่อสินค้า</th>
-      <th style="width: 90px; text-align: center;">จำนวนที่สั่ง</th>
-      <th style="width: 70px; text-align: center;">หน่วย</th>
+      <th style="width: 70px; text-align: center;">จำนวนที่สั่ง</th>
+      <th style="width: 90px; text-align: center;">หน่วย</th>
     </tr>
   </thead>
   <tbody>
