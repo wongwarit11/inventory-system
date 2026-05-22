@@ -18,25 +18,53 @@
         /* ===== TOP NAVBAR ===== */
         .nav-top {
             background: #185FA5;
-            height: 50px;
+            height: 70px;  /* เพิ่มจาก 50px */
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 24px;
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 1050;
         }
         .nav-brand {
             color: white;
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 18px;  /* เพิ่มจาก 15px */
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
+            letter-spacing: 0.01em;
         }
         .nav-brand:hover { color: #B5D4F4; }
+        .nav-brand-icon {
+            width: 44px; height: 44px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .nav-brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        .nav-brand-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+            line-height: 1.2;
+        }
+        .nav-brand-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.65);
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
         .nav-right { display: flex; align-items: center; gap: 10px; }
         .search-btn {
             background: rgba(255,255,255,0.15);
@@ -117,7 +145,7 @@
             align-items: stretch;
             padding: 0 20px;
             position: fixed;
-            top: 50px; left: 0; right: 0;
+            top: 70px; left: 0; right: 0;
             z-index: 1045;
             overflow-x: auto;
             overflow-y: visible;
@@ -184,7 +212,7 @@
 
         /* ===== MAIN CONTENT ===== */
         .main-content {
-            margin-top: 92px;
+            margin-top: 112px;
             padding: 20px;
             min-height: calc(100vh - 92px);
             position:relative;
@@ -252,7 +280,7 @@
         @media (max-width: 767px) {
             .mobile-menu-btn { display: flex; }
             .nav-sub { display: none; }
-            .main-content { margin-top: 50px; padding: 12px; }
+            .main-content { margin-top: 70px; padding: 12px; }
             .search-btn span { display: none; }
         }
 
@@ -274,8 +302,13 @@
             <i class="fas fa-bars"></i>
         </button>
         <a class="nav-brand" href="{{ url('/') }}">
-            <i class="fas fa-hospital-alt"></i>
-            ระบบสต็อกยาและเวชภัณฑ์โรงพยาบาล
+            <div class="nav-brand-icon">
+                <i class="fas fa-hospital-alt"></i>
+            </div>
+            <div class="nav-brand-text">
+                <span class="nav-brand-title">ระบบสต็อกยาและเวชภัณฑ์</span>
+                <span class="nav-brand-sub">โรงพยาบาลวัดห้วยปลากั้งเพื่อสังคม</span>
+            </div>
         </a>
     </div>
     <div class="nav-right">
