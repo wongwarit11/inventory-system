@@ -104,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/low-stock-products/export', [ReportController::class, 'exportLowStock'])->name('reports.low_stock_products.export');
     Route::get('/reports/expiring-batches', [ReportController::class, 'expiringBatchesReport'])->name('reports.expiring_batches'); 
     Route::get('/reports/pending-requisitions', [ReportController::class, 'pendingRequisitionsReport'])->name('reports.pending_requisitions');
-
+    Route::get('/reports/low-stock-products/purchase-order/{supplier}', [ReportController::class, 'exportPurchaseOrder'])->name('reports.low_stock_products.purchase_order');
 });
 
 // API Route สำหรับดึง Batches ตาม Product ID (อยู่นอก Auth middleware เพื่อให้ AJAX เรียกได้ง่าย)

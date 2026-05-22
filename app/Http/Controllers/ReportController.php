@@ -214,4 +214,35 @@ class ReportController extends Controller
 
         return view('reports.pending_requisitions_report', compact('pendingRequisitions'));
     }
+    public function exportPurchaseOrder(Request $request, $supplierId)
+    {
+        if ($response = $this->authorizeReportAccess()) {
+            return $response;
+        }
+
+        $supplier = \App\Models\Supplier::findOrFail($supplierId);
+
+        $products = Product::where('minimum_stock_level', '>', 0)
+            ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
+            ->where('supplier_id', $supplierId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        // คำนวณจำนวนที่ควรสั่ง = จุดต่ำสุด - คงเหลือ
+        $products->each(function($product) {
+            $currentStock = $product->batches()->sum('quantity');
+            $product->order_quantity = max($product->minimum_stock_level - $currentStock, $product->minimum_stock_level);
+        });
+
+        // สร้างเลขที่ใบสั่งซื้อ
+        $date = \Carbon\Carbon::now()->format('Ymd');
+        $count = \App\Models\Product::count() % 100 + 1;
+        $poNumber = 'PO-' . $date . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.purchase_order_pdf', compact('products', 'supplier', 'poNumber'));
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download('purchase_order_' . $supplier->name . '_' . $date . '.pdf');
+    }
 }

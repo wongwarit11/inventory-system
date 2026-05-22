@@ -10,6 +10,12 @@
             class="btn btn-success">
                 <i class="fas fa-file-excel me-2"></i> ส่งออก Excel
             </a>
+            @if(request('supplier_id'))
+            <a href="{{ route('reports.low_stock_products.purchase_order', request('supplier_id')) }}" 
+            class="btn btn-primary">
+                <i class="fas fa-file-pdf me-2"></i> ใบสั่งซื้อ PDF
+            </a>
+            @endif
             <a href="{{ route('dashboard') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-alt-circle-left me-2"></i> กลับ Dashboard
             </a>
