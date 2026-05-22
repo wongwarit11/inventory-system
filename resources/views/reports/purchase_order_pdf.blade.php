@@ -34,7 +34,7 @@ body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
 .items-table thead th { padding: 8px 10px; font-weight: bold; }
 .items-table tbody tr.odd { background: #FFFFFF; }
 .items-table tbody tr.even { background: #F7F5EF; }
-.items-table tbody td { padding: 8px 10px; border-bottom: 0.5px solid #E0DDD5; }
+.items-table tbody td { padding: 2px 4px; border-bottom: 0.5px solid #E0DDD5; }
 .items-table tfoot td { padding: 8px 10px; border-top: 1.5px solid #185FA5; }
 
 .note-box { margin-top: 10px; padding: 8px 12px; background: #EEF5FC; border-left: 3px solid #185FA5; border-radius: 0 4px 4px 0; font-size: 11px; color: #444441; }
