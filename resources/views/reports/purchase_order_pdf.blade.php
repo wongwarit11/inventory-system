@@ -20,12 +20,40 @@ body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
 .doc-number-badge { display: inline-block; background: #E6F1FB; padding: 4px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #0C447C; border: 1px solid #B5D4F4; }
 .doc-date { font-size: 11px; color: #5F5E5A; margin-top: 4px; }
 
-.info-box { border-radius: 6px; overflow: hidden; border: 1px solid #B5D4F4; width: 100%; }
-.info-box-header { background: #185FA5; padding: 7px 14px; }
-.info-box-header-text { font-size: 12px; color: white; font-weight: bold; letter-spacing: 0.02em; }
-.info-box-body { background: #F7F5EF; padding: 10px 14px; }
-.info-key { color: #888780; font-size: 12px; width: 72px; vertical-align: top; padding: 3px 0; }
-.info-val { font-size: 12px; font-weight: bold; color: #2C2C2A; padding: 3px 0; }
+.info-box { 
+  border-radius: 6px; 
+  overflow: hidden; 
+  border: 1px solid #B5D4F4; 
+  width: auto;
+  display: inline-block;
+}
+.info-box-header { 
+  background: #185FA5; 
+  padding: 5px 10px; 
+}
+.info-box-header-text { 
+  font-size: 12px; 
+  color: white; 
+  font-weight: bold; 
+  letter-spacing: 0.02em; 
+}
+.info-box-body { 
+  background: #F7F5EF; 
+  padding: 6px 10px; 
+}
+.info-key { 
+  color: #888780; 
+  font-size: 11px; 
+  width: 72px; 
+  vertical-align: top; 
+  padding: 1px 0; 
+}
+.info-val { 
+  font-size: 11px; 
+  font-weight: bold; 
+  color: #2C2C2A; 
+  padding: 1px 0; 
+}
 
 .section-title { font-size: 13px; font-weight: bold; color: #185FA5; border-bottom: 1.5px solid #B5D4F4; padding-bottom: 5px; margin-bottom: 10px; }
 
@@ -75,7 +103,7 @@ body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
 <hr class="divider">
 
 {{-- Supplier Info --}}
-<table style="width: 50%; border-collapse: collapse; margin-bottom: 14px;">
+<table style="width: auto; border-collapse: collapse; margin-bottom: 14px;">
   <tr>
     <td>
       <div class="info-box">
