@@ -5,63 +5,85 @@
 <style>
 @font-face { font-family: 'THSarabunNew'; font-style: normal; font-weight: normal; src: url('{{ storage_path("fonts/THSarabunNew.ttf") }}') format('truetype'); }
 @font-face { font-family: 'THSarabunNew'; font-style: normal; font-weight: bold; src: url('{{ storage_path("fonts/THSarabunNew Bold.ttf") }}') format('truetype'); }
-* { font-family: 'THSarabunNew', sans-serif; }
-body { font-size: 14px; color: #2C2C2A; padding: 30px; }
-.header-table { width: 100%; border-bottom: 2px solid #185FA5; padding-bottom: 12px; margin-bottom: 14px; }
-.hospital-name { font-size: 16px; font-weight: bold; color: #0C447C; }
-.hospital-sub { font-size: 12px; color: #5F5E5A; }
-.doc-title { font-size: 20px; font-weight: bold; color: #185FA5; }
-.doc-number { background: #E6F1FB; padding: 4px 12px; border-radius: 6px; font-size: 13px; color: #0C447C; font-weight: bold; }
-.info-box { border-radius: 6px; overflow: hidden; border: 1px solid #B5D4F4; }
+* { font-family: 'THSarabunNew', sans-serif; box-sizing: border-box; }
+body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
+
+.header-table { width: 100%; margin-bottom: 0; }
+.divider { border: none; border-top: 2.5px solid #185FA5; margin: 10px 0 14px 0; }
+.divider-thin { border: none; border-top: 0.5px solid #D3D1C7; margin: 12px 0; }
+
+.org-name { font-size: 17px; font-weight: bold; color: #0C447C; margin: 0 0 2px 0; }
+.org-sub { font-size: 11px; color: #5F5E5A; margin: 1px 0; }
+
+.doc-title { font-size: 22px; font-weight: bold; color: #185FA5; margin: 0; }
+.doc-subtitle { font-size: 11px; color: #888780; margin: 1px 0 6px 0; }
+.doc-number-badge { display: inline-block; background: #E6F1FB; padding: 4px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #0C447C; border: 1px solid #B5D4F4; }
+.doc-date { font-size: 11px; color: #5F5E5A; margin-top: 4px; }
+
+.info-box { border-radius: 6px; overflow: hidden; border: 1px solid #B5D4F4; width: 100%; }
 .info-box-header { background: #185FA5; padding: 7px 14px; }
-.info-box-header-text { font-size: 12px; color: white; font-weight: bold; }
-.info-box-body { background: #F1EFE8; padding: 10px 14px; }
-.info-key { color: #5F5E5A; font-size: 12px; width: 70px; }
-.info-val { font-weight: bold; color: #2C2C2A; font-size: 12px; }
-.section-title { font-size: 13px; font-weight: bold; color: #185FA5; border-bottom: 1px solid #B5D4F4; padding-bottom: 6px; margin-bottom: 10px; }
+.info-box-header-text { font-size: 12px; color: white; font-weight: bold; letter-spacing: 0.02em; }
+.info-box-body { background: #F7F5EF; padding: 10px 14px; }
+.info-key { color: #888780; font-size: 12px; width: 72px; vertical-align: top; padding: 3px 0; }
+.info-val { font-size: 12px; font-weight: bold; color: #2C2C2A; padding: 3px 0; }
+
+.section-title { font-size: 13px; font-weight: bold; color: #185FA5; border-bottom: 1.5px solid #B5D4F4; padding-bottom: 5px; margin-bottom: 10px; }
+
 .items-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .items-table thead tr { background: #185FA5; color: white; }
-.items-table thead th { padding: 8px 10px; text-align: center; }
-.items-table tbody tr.odd { background: white; }
-.items-table tbody tr.even { background: #F1EFE8; }
-.items-table tbody td { padding: 8px 10px; border-bottom: 1px solid #D3D1C7; }
-.sig-line { border-top: 1px solid #888780; padding-top: 8px; margin-top: 50px; text-align: center; }
-.sig-name { font-size: 12px; font-weight: bold; }
-.sig-sub { font-size: 11px; color: #5F5E5A; margin-top: 2px; }
-.sig-date { font-size: 11px; color: #888780; margin-top: 4px; }
+.items-table thead th { padding: 8px 10px; font-weight: bold; }
+.items-table tbody tr.odd { background: #FFFFFF; }
+.items-table tbody tr.even { background: #F7F5EF; }
+.items-table tbody td { padding: 8px 10px; border-bottom: 0.5px solid #E0DDD5; }
+.items-table tfoot td { padding: 8px 10px; border-top: 1.5px solid #185FA5; }
+
+.note-box { margin-top: 10px; padding: 8px 12px; background: #EEF5FC; border-left: 3px solid #185FA5; border-radius: 0 4px 4px 0; font-size: 11px; color: #444441; }
+
+.sig-section { width: 100%; margin-top: 28px; }
+.sig-cell { width: 33%; text-align: center; vertical-align: top; padding: 0 10px; }
+.sig-space { height: 48px; }
+.sig-line { border-top: 1px solid #888780; padding-top: 7px; }
+.sig-name { font-size: 12px; font-weight: bold; color: #2C2C2A; }
+.sig-sub { font-size: 11px; color: #888780; margin-top: 2px; }
+.sig-date { font-size: 11px; color: #B4B2A9; margin-top: 3px; }
+
+.footer-table { width: 100%; margin-top: 14px; padding-top: 7px; border-top: 0.5px solid #D3D1C7; }
+.footer-text { font-size: 10px; color: #B4B2A9; }
 </style>
 </head>
 <body>
 
+{{-- Header --}}
 <table class="header-table">
   <tr>
-    <td style="width: 60px; vertical-align: middle;">
-      <img src="{{ public_path('images/hospital_logo.png') }}" style="width: 56px; height: 56px;">
+    <td style="width: 64px; vertical-align: middle;">
+      <img src="{{ public_path('images/hospital_logo.png') }}" style="width: 58px; height: 58px; border-radius: 8px;">
     </td>
-    <td style="vertical-align: middle; padding-left: 10px;">
-      <div class="hospital-name">มูลนิธิพระอาจารย์พบโชคเพื่อสังคม</div>
-      <div class="hospital-sub">เลขที่: 553 หมู่ 14 ต.บ้านดู่ อ.เมืองเชียงราย จ.เชียงราย 57100</div>
-      <div class="hospital-sub">เลขประจำตัวผู้เสียภาษี: 099-3-00048408-8</div>
-      <div class="hospital-sub">เบอร์โทร: 052 029 888</div>
+    <td style="vertical-align: middle; padding-left: 12px;">
+      <p class="org-name">มูลนิธิพระอาจารย์พบโชคเพื่อสังคม</p>
+      <p class="org-sub">553 หมู่ 14 ต.บ้านดู่ อ.เมืองเชียงราย จ.เชียงราย 57100</p>
+      <p class="org-sub">เลขประจำตัวผู้เสียภาษี: 099-3-00048408-8 &nbsp;|&nbsp; โทร: 052 029 888</p>
     </td>
     <td style="text-align: right; vertical-align: middle;">
-      <div class="doc-title">ใบสั่งซื้อพัสดุ</div>
-      <div style="font-size: 11px; color: #5F5E5A;">Purchase Order</div>
-      <div style="margin-top: 4px;"><span class="doc-number">{{ $poNumber }}</span></div>
-      <div style="font-size: 11px; color: #5F5E5A; margin-top: 3px;">วันที่ {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->format('d/m/Y') }}</div>
+      <p class="doc-title">ใบสั่งซื้อพัสดุ</p>
+      <p class="doc-subtitle">Purchase Order</p>
+      <span class="doc-number-badge">{{ $poNumber }}</span>
+      <p class="doc-date">วันที่ {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->format('d/m/Y') }}</p>
     </td>
   </tr>
 </table>
+<hr class="divider">
 
-<table style="width: 100%; border-collapse: separate; border-spacing: 10px 0; margin-bottom: 14px;">
+{{-- Supplier Info --}}
+<table style="width: 50%; border-collapse: collapse; margin-bottom: 14px;">
   <tr>
-    <td style="width: 50%; vertical-align: top;">
+    <td>
       <div class="info-box">
         <div class="info-box-header"><span class="info-box-header-text">ข้อมูลผู้จัดจำหน่าย</span></div>
         <div class="info-box-body">
-          <table style="width: 100%;">
+          <table style="width: 100%; border-collapse: collapse;">
             <tr><td class="info-key">บริษัท</td><td class="info-val">{{ $supplier->name ?? '-' }}</td></tr>
-            <tr><td class="info-key" style="vertical-align: top;">ที่อยู่</td><td class="info-val">{{ $supplier->address ?? '-' }}</td></tr>
+            <tr><td class="info-key">ที่อยู่</td><td class="info-val">{{ $supplier->address ?? '-' }}</td></tr>
             <tr><td class="info-key">โทรศัพท์</td><td class="info-val">{{ $supplier->phone ?? '-' }}</td></tr>
             <tr><td class="info-key">อีเมล</td><td class="info-val">{{ $supplier->email ?? '-' }}</td></tr>
           </table>
@@ -71,68 +93,76 @@ body { font-size: 14px; color: #2C2C2A; padding: 30px; }
   </tr>
 </table>
 
+{{-- Product Table --}}
 <div class="section-title">รายการสินค้าที่สั่งซื้อ</div>
 <table class="items-table">
   <thead>
     <tr>
-      <th style="width: 36px;">#</th>
+      <th style="width: 36px; text-align: center;">#</th>
       <th style="text-align: left;">ชื่อสินค้า</th>
-      <th style="width: 80px;">จำนวนที่สั่ง</th>
-      <th style="width: 70px;">หน่วย</th>
+      <th style="width: 90px; text-align: center;">จำนวนที่สั่ง</th>
+      <th style="width: 70px; text-align: center;">หน่วย</th>
     </tr>
   </thead>
   <tbody>
     @foreach($products as $index => $product)
     <tr class="{{ $index % 2 == 0 ? 'odd' : 'even' }}">
-      <td style="text-align: center; color: #5F5E5A;">{{ $index + 1 }}</td>
+      <td style="text-align: center; color: #888780;">{{ $index + 1 }}</td>
       <td>{{ $product->name }}</td>
-      <td style="text-align: center; font-weight: bold;">{{ $product->order_quantity }}</td>
+      <td style="text-align: center; font-weight: bold; color: #185FA5;">{{ $product->order_quantity }}</td>
       <td style="text-align: center; color: #5F5E5A;">{{ $product->unit }}</td>
     </tr>
     @endforeach
-    <tr>
-      <td colspan="2" style="text-align: right; color: #5F5E5A; font-size: 11px; border-bottom: none;">รวมทั้งหมด</td>
-      <td style="text-align: center; font-weight: bold; color: #185FA5; border-bottom: none;">{{ $products->sum('order_quantity') }}</td>
-      <td style="text-align: center; font-size: 11px; color: #5F5E5A; border-bottom: none;">{{ $products->count() }} รายการ</td>
-    </tr>
   </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2" style="text-align: right; color: #5F5E5A; font-size: 11px;">รวมทั้งหมด {{ $products->count() }} รายการ</td>
+      <td style="text-align: center; font-weight: bold; color: #185FA5; font-size: 13px;">{{ $products->sum('order_quantity') }}</td>
+      <td></td>
+    </tr>
+  </tfoot>
 </table>
 
-<div style="margin-top: 8px; padding: 8px 10px; background: #E6F1FB; border-radius: 6px; font-size: 11px; color: #5F5E5A;">
+<div class="note-box">
   หมายเหตุ: กรุณาส่งใบเสนอราคาภายในวันที่กำหนด หากมีข้อสงสัยกรุณาติดต่อ 052 029 888
 </div>
 
-<table style="width: 100%; margin-top: 24px;">
+{{-- Signatures --}}
+<table class="sig-section">
   <tr>
-    <td style="width: 33%; text-align: center; vertical-align: top; padding: 0 8px;">
+    <td class="sig-cell">
+      <div class="sig-space"></div>
       <div class="sig-line">
-        <div class="sig-name">ผู้สั่งซื้อ</div>
-        <div class="sig-sub">(................................)</div>
-        <div class="sig-date">วันที่ ......./......./.......</div>
+        <p class="sig-name">ผู้สั่งซื้อ</p>
+        <p class="sig-sub">(................................)</p>
+        <p class="sig-date">วันที่ ......./......./.......</p>
       </div>
     </td>
-    <td style="width: 33%; text-align: center; vertical-align: top; padding: 0 8px;">
+    <td class="sig-cell">
+      <div class="sig-space"></div>
       <div class="sig-line">
-        <div class="sig-name">ผู้อนุมัติ</div>
-        <div class="sig-sub">(................................)</div>
-        <div class="sig-date">วันที่ ......./......./.......</div>
+        <p class="sig-name">ผู้อนุมัติ</p>
+        <p class="sig-sub">(................................)</p>
+        <p class="sig-date">วันที่ ......./......./.......</p>
       </div>
     </td>
-    <td style="width: 33%; text-align: center; vertical-align: top; padding: 0 8px;">
+    <td class="sig-cell">
+      <div class="sig-space"></div>
       <div class="sig-line">
-        <div class="sig-name">ผู้จัดจำหน่าย</div>
-        <div class="sig-sub">(................................)</div>
-        <div class="sig-date">วันที่ ......./......./.......</div>
+        <p class="sig-name">ผู้จัดจำหน่าย</p>
+        <p class="sig-sub">(................................)</p>
+        <p class="sig-date">วันที่ ......./......./.......</p>
       </div>
     </td>
   </tr>
 </table>
 
-<table style="width: 100%; margin-top: 16px; border-top: 1px solid #D3D1C7; padding-top: 8px;">
+{{-- Footer --}}
+<table class="footer-table">
   <tr>
-    <td style="font-size: 10px; color: #888780; text-align: left;">พิมพ์เมื่อ: {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->format('d/m/Y H:i') }} น.</td>
-    <td style="font-size: 10px; color: #888780; text-align: center;">ระบบจัดการคลังพัสดุ — มูลนิธิพระอาจารย์พบโชคเพื่อสังคม</td>
-    <td style="font-size: 10px; color: #888780; text-align: right;">หน้า 1/1</td>
+    <td class="footer-text" style="text-align: left;">พิมพ์เมื่อ: {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->format('d/m/Y H:i') }} น.</td>
+    <td class="footer-text" style="text-align: center;">ระบบจัดการคลังพัสดุ — มูลนิธิพระอาจารย์พบโชคเพื่อสังคม</td>
+    <td class="footer-text" style="text-align: right;">หน้า 1/1</td>
   </tr>
 </table>
 
