@@ -77,12 +77,28 @@ class DashboardController extends Controller
                                             ->orderBy('created_at', 'desc')
                                             ->take(5)
                                             ->get();
+        
+        // ข้อมูลการเบิกแยกตามแผนก
+        $departmentStats = \App\Models\StockTransaction::where('transaction_type', 'out')
+            ->whereNotNull('department_id')
+            ->with('department')
+            ->selectRaw('department_id, SUM(quantity) as total_out')
+            ->groupBy('department_id')
+            ->orderByDesc('total_out')
+            ->take(8)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'name' => $item->department->name ?? '-',
+                    'total' => (int) $item->total_out,
+                ];
+            });
 
         return view('dashboard', compact(
             'totalProducts', 'totalBatches', 'totalStockQuantity',
             'lowStockProductsCount', 'expiringBatchesCount', 'pendingRequisitionsCount',
             'totalDepartments', 'totalSuppliers', 'totalManufacturers', 'totalUsers',
-            'chartData', 'lowStockProducts', 'recentTransactions'
+            'chartData', 'lowStockProducts', 'recentTransactions', 'departmentStats'
         ));
     }
 }

@@ -4,197 +4,441 @@
 
 @section('content')
 <style>
-.stat-card {
+/* Hero */
+.hero-section {
+    background: #0C447C;
+    margin: -20px -20px 0 -20px;
+    padding: 20px 20px 40px;
+    position: relative;
+    overflow: hidden;
+}
+.hero-section::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+}
+.hero-section::after {
+    content: '';
+    position: absolute;
+    right: 80px; bottom: -80px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+}
+.hero-stats { display: flex; gap: 24px; }
+.hero-stat { text-align: center; }
+.hero-stat-val { font-size: 22px; font-weight: 500; color: white; line-height: 1; }
+.hero-stat-label { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 3px; }
+.hero-divider { width: 0.5px; background: rgba(255,255,255,0.15); align-self: stretch; }
+
+/* Cards */
+.dash-cards {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 12px;
+    margin: -22px 0 14px;
+    position: relative;
+    z-index: 1;
+}
+.dash-card {
     background: white;
     border: 0.5px solid #D3D1C7;
     border-radius: 12px;
     padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.15s;
 }
-.stat-icon {
+.dash-card:hover { opacity: 0.92; border-color: #B4B2A9; }
+.dash-card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+}
+.dash-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    margin-top: 6px;
+}
+.dash-card-icon {
     width: 40px; height: 40px;
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     font-size: 18px;
 }
-.stat-val { font-size: 26px; font-weight: 600; color: #2C2C2A; line-height: 1; }
-.stat-label { font-size: 12px; color: #888780; }
-.stat-badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; display: inline-block; }
+.dash-card-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 500;
+}
+.dash-card-val {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 3px;
+}
+.dash-card-label {
+    font-size: 11px;
+    color: #888780;
+    margin-bottom: 12px;
+}
+.dash-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 0.5px solid #E0DDD5;
+    font-size: 10px;
+    color: #888780;
+}
+.dash-card-link {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+}
+
+/* Panels */
 .panel {
     background: white;
     border: 0.5px solid #D3D1C7;
     border-radius: 12px;
-    padding: 16px;
+    overflow: hidden;
 }
-.panel-title {
-    font-size: 13px; font-weight: 500; color: #2C2C2A;
-    display: flex; align-items: center; gap: 6px;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
+.panel-hd {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     border-bottom: 0.5px solid #E0DDD5;
+    background: #F7F5EF;
 }
-.bar-wrap { display: flex; flex-direction: column; gap: 10px; }
-.bar-row { display: flex; align-items: center; gap: 8px; }
-.bar-day { font-size: 11px; color: #888780; width: 40px; text-align: right; flex-shrink: 0; }
-.bar-track { flex: 1; background: #f0f4f8; border-radius: 99px; height: 8px; overflow: hidden; }
-.bar-fill-out { height: 8px; border-radius: 99px; background: #185FA5; }
-.bar-num { font-size: 11px; color: #888780; width: 30px; text-align: right; flex-shrink: 0; }
-.low-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 10px;
-    background: #f7f5ef;
-    border-radius: 8px;
+.panel-title { font-size: 12px; font-weight: 500; color: #2C2C2A; flex: 1; }
+.panel-link {
+    font-size: 10px;
+    color: #185FA5;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    background: #E6F1FB;
+    border-radius: 99px;
+}
+.panel-link:hover { background: #B5D4F4; }
+.panel-body { padding: 12px 14px; }
+
+/* Chart */
+.chart-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 110px;
     margin-bottom: 6px;
+    position: relative;
 }
-.low-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.chart-area::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 0.5px;
+    background: #E0DDD5;
+}
+.bar-group { flex: 1; display: flex; gap: 2px; align-items: flex-end; height: 100%; }
+.bar { flex: 1; border-radius: 3px 3px 0 0; min-height: 3px; }
+.chart-x { display: flex; gap: 6px; margin-bottom: 8px; }
+.chart-x-label { flex: 1; font-size: 9px; color: #888780; text-align: center; }
+.chart-legend { display: flex; gap: 12px; }
+.legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #5F5E5A; }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+/* Activity Feed */
+.feed-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 0.5px solid #F0EDE6;
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+}
+.feed-name { font-size: 12px; color: #2C2C2A; font-weight: 500; }
+.feed-sub { font-size: 10px; color: #888780; margin-top: 2px; }
+.feed-qty { font-size: 12px; font-weight: 500; }
+.feed-time { font-size: 10px; color: #888780; margin-top: 2px; }
+
+/* Table */
 .tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
-.tbl th { font-size: 11px; color: #888780; font-weight: 500; padding: 6px 10px; text-align: left; border-bottom: 0.5px solid #E0DDD5; }
-.tbl td { padding: 8px 10px; border-bottom: 0.5px solid #F0EDE6; color: #2C2C2A; }
+.tbl thead tr { background: #F7F5EF; }
+.tbl th { font-size: 11px; color: #888780; font-weight: 500; padding: 8px 12px; text-align: left; border-bottom: 0.5px solid #D3D1C7; }
+.tbl td { padding: 9px 12px; border-bottom: 0.5px solid #F0EDE6; color: #2C2C2A; vertical-align: middle; }
 .tbl tr:last-child td { border-bottom: none; }
-.badge-in { background: #EAF3DE; color: #3B6D11; font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
-.badge-out { background: #FCEBEB; color: #A32D2D; font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
-.badge-adj-in { background: #E6F1FB; color: #185FA5; font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
-.badge-adj-out { background: #FAEEDA; color: #854F0B; font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
-.see-all { font-size: 11px; color: #185FA5; text-decoration: none; }
-.see-all:hover { text-decoration: underline; }
+.tbl tbody tr:hover td { background: #FAFAF8; }
+.badge { font-size: 11px; padding: 3px 9px; border-radius: 4px; font-weight: 500; }
+.b-in { background: #EAF3DE; color: #27500A; }
+.b-out { background: #FCEBEB; color: #791F1F; }
+.b-adj-in { background: #E6F1FB; color: #0C447C; }
+.b-adj-out { background: #FAEEDA; color: #633806; }
+
+/* Mini stats */
+.mini-grid {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+.mini-stat {
+    background: white;
+    border: 0.5px solid #D3D1C7;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.mini-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+}
+.mini-val { font-size: 18px; font-weight: 500; color: #2C2C2A; line-height: 1; }
+.mini-label { font-size: 10px; color: #888780; margin-top: 2px; }
 </style>
 
-{{-- Page Header --}}
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-    <div style="font-size:15px;font-weight:500;color:#2C2C2A;display:flex;align-items:center;gap:7px;">
-        <i class="fas fa-tachometer-alt" style="color:#185FA5;"></i> Dashboard
+{{-- HERO SECTION --}}
+<div class="hero-section">
+    <div style="font-size:14px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;">ภาพรวมระบบ</div>
+    <div style="font-size:24px;font-weight:500;color:white;margin-bottom:14px;">
+        โรงพยาบาลวัดห้วยปลากั้งเพื่อสังคม
+        <span style="font-size:14px;color:rgba(255,255,255,0.5);font-weight:400;margin-left:8px;">
+            {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->isoFormat('D MMMM YYYY') }}
+        </span>
     </div>
-    <div style="font-size:12px;color:#888780;">
-        <i class="fas fa-calendar me-1"></i>
-        {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->isoFormat('ddddที่ D MMMM YYYY') }}
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <div class="hero-stat-val">{{ number_format($totalProducts) }}</div>
+            <div class="hero-stat-label">สินค้าทั้งหมด</div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+            <div class="hero-stat-val">{{ number_format($totalBatches) }}</div>
+            <div class="hero-stat-label">ล็อตสินค้า</div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+            <div class="hero-stat-val" style="color:#FAC775;">{{ number_format($lowStockProductsCount) }}</div>
+            <div class="hero-stat-label">สต็อกต่ำ</div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+            <div class="hero-stat-val" style="color:#F09595;">{{ number_format($expiringBatchesCount) }}</div>
+            <div class="hero-stat-label">ใกล้หมดอายุ</div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+            <div class="hero-stat-val" style="color:#9FE1CB;">{{ number_format($pendingRequisitionsCount) }}</div>
+            <div class="hero-stat-label">รอดำเนินการ</div>
+        </div>
     </div>
 </div>
 
-{{-- Summary Cards --}}
-<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px;">
-
-    <a href="{{ route('products.index') }}" style="background:white;border:0.5px solid #B5D4F4;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:10px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:20px;">
+{{-- SUMMARY CARDS --}}
+<div class="dash-cards">
+    <a href="{{ route('products.index') }}" class="dash-card">
+        <div class="dash-card-accent" style="background:#185FA5;"></div>
+        <div class="dash-card-top">
+            <div class="dash-card-icon" style="background:#E6F1FB;">
                 <i class="fas fa-boxes" style="color:#185FA5;"></i>
             </div>
-            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#E6F1FB;color:#0C447C;">Active {{ number_format($totalProducts) }}</span>
+            <span class="dash-card-badge" style="background:#E6F1FB;color:#0C447C;">+12 เดือนนี้</span>
         </div>
-        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#0C447C;">{{ number_format($totalProducts) }}</div>
-        <div style="font-size:12px;margin-bottom:14px;color:#185FA5;">รายการสินค้าทั้งหมด</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #B5D4F4;">
-            <span style="font-size:11px;color:#888780;">ล็อตสินค้า {{ number_format($totalBatches) }} ล็อต</span>
-            <span style="font-size:11px;color:#185FA5;display:flex;align-items:center;gap:4px;">ดูทั้งหมด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        <div class="dash-card-val" style="color:#0C447C;">{{ number_format($totalProducts) }}</div>
+        <div class="dash-card-label">รายการสินค้าทั้งหมด</div>
+        <div class="dash-card-footer">
+            <span>ล็อตสินค้า {{ number_format($totalBatches) }} ล็อต</span>
+            <span class="dash-card-link" style="color:#185FA5;">ดูทั้งหมด <i class="fas fa-arrow-right" style="font-size:9px;"></i></span>
         </div>
     </a>
 
-    <a href="{{ route('reports.low_stock_products') }}" style="background:white;border:0.5px solid #F7C1C1;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:10px;background:#FCEBEB;display:flex;align-items:center;justify-content:center;font-size:20px;">
+    <a href="{{ route('reports.low_stock_products') }}" class="dash-card">
+        <div class="dash-card-accent" style="background:#A32D2D;"></div>
+        <div class="dash-card-top">
+            <div class="dash-card-icon" style="background:#FCEBEB;">
                 <i class="fas fa-exclamation-triangle" style="color:#A32D2D;"></i>
             </div>
-            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#FCEBEB;color:#791F1F;">ต้องสั่งซื้อ</span>
+            <span class="dash-card-badge" style="background:#FCEBEB;color:#791F1F;">ต้องสั่งซื้อ</span>
         </div>
-        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#791F1F;">{{ number_format($lowStockProductsCount) }}</div>
-        <div style="font-size:12px;margin-bottom:14px;color:#A32D2D;">สินค้าสต็อกต่ำกว่าจุดต่ำสุด</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #F7C1C1;">
-            <span style="font-size:11px;color:#888780;">อัปเดตล่าสุดวันนี้</span>
-            <span style="font-size:11px;color:#A32D2D;display:flex;align-items:center;gap:4px;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        <div class="dash-card-val" style="color:#791F1F;">{{ number_format($lowStockProductsCount) }}</div>
+        <div class="dash-card-label">สต็อกต่ำกว่าจุดต่ำสุด</div>
+        <div class="dash-card-footer">
+            <span>อัปเดตวันนี้</span>
+            <span class="dash-card-link" style="color:#A32D2D;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:9px;"></i></span>
         </div>
     </a>
 
-    <a href="{{ route('reports.expiring_batches') }}" style="background:white;border:0.5px solid #FAC775;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:10px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-size:20px;">
+    <a href="{{ route('reports.expiring_batches') }}" class="dash-card">
+        <div class="dash-card-accent" style="background:#854F0B;"></div>
+        <div class="dash-card-top">
+            <div class="dash-card-icon" style="background:#FAEEDA;">
                 <i class="fas fa-calendar-times" style="color:#854F0B;"></i>
             </div>
-            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#FAEEDA;color:#633806;">ภายใน 30 วัน</span>
+            <span class="dash-card-badge" style="background:#FAEEDA;color:#633806;">30 วัน</span>
         </div>
-        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#633806;">{{ number_format($expiringBatchesCount) }}</div>
-        <div style="font-size:12px;margin-bottom:14px;color:#854F0B;">ล็อตใกล้หมดอายุ</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #FAC775;">
-            <span style="font-size:11px;color:#888780;">ภายใน 30 วันข้างหน้า</span>
-            <span style="font-size:11px;color:#854F0B;display:flex;align-items:center;gap:4px;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        <div class="dash-card-val" style="color:#633806;">{{ number_format($expiringBatchesCount) }}</div>
+        <div class="dash-card-label">ล็อตใกล้หมดอายุ</div>
+        <div class="dash-card-footer">
+            <span>ภายใน 30 วันข้างหน้า</span>
+            <span class="dash-card-link" style="color:#854F0B;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:9px;"></i></span>
         </div>
     </a>
 
-    <a href="{{ route('requisitions.index') }}" style="background:white;border:0.5px solid #C0DD97;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:10px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:20px;">
+    <a href="{{ route('requisitions.index') }}" class="dash-card">
+        <div class="dash-card-accent" style="background:#3B6D11;"></div>
+        <div class="dash-card-top">
+            <div class="dash-card-icon" style="background:#EAF3DE;">
                 <i class="fas fa-file-invoice" style="color:#3B6D11;"></i>
             </div>
-            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#EAF3DE;color:#27500A;">รอดำเนินการ</span>
+            <span class="dash-card-badge" style="background:#EAF3DE;color:#27500A;">Pending</span>
         </div>
-        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#27500A;">{{ number_format($pendingRequisitionsCount) }}</div>
-        <div style="font-size:12px;margin-bottom:14px;color:#3B6D11;">ใบขอเบิกค้างอนุมัติ</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #C0DD97;">
-            <span style="font-size:11px;color:#888780;">รออนุมัติ {{ number_format($pendingRequisitionsCount) }} รายการ</span>
-            <span style="font-size:11px;color:#3B6D11;display:flex;align-items:center;gap:4px;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        <div class="dash-card-val" style="color:#27500A;">{{ number_format($pendingRequisitionsCount) }}</div>
+        <div class="dash-card-label">ใบขอเบิกค้างอนุมัติ</div>
+        <div class="dash-card-footer">
+            <span>รออนุมัติ {{ number_format($pendingRequisitionsCount) }} รายการ</span>
+            <span class="dash-card-link" style="color:#3B6D11;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:9px;"></i></span>
         </div>
     </a>
-
 </div>
 
-{{-- Mid Section: Chart + Low Stock --}}
-<div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:14px;">
+{{-- MID SECTION --}}
+<div style="display:grid;grid-template-columns:5fr 3fr;gap:12px;margin-bottom:12px;">
 
-    {{-- Bar Chart --}}
+    {{-- Department Bar Chart --}}
     <div class="panel">
-        <div class="panel-title">
+        <div class="panel-hd">
             <i class="fas fa-chart-bar" style="color:#185FA5;font-size:14px;"></i>
-            การเบิกใช้สินค้า 7 วันล่าสุด
-            <span style="margin-left:auto;font-size:11px;color:#888780;">จำนวน/วัน</span>
+            <span class="panel-title">การเบิกใช้สินค้าแยกตามแผนก</span>
+            <span style="font-size:10px;background:#E6F1FB;color:#0C447C;padding:2px 8px;border-radius:99px;">จำนวนจ่ายออกรวม</span>
         </div>
-        <div class="bar-wrap">
-            @php $maxOut = max(array_column($chartData, 'out') ?: [1]); @endphp
-            @foreach($chartData as $i => $day)
-            <div class="bar-row">
-                <span class="bar-day">{{ $day['date'] }}</span>
-                <div class="bar-track">
-                    <div class="bar-fill-out" style="width:{{ $maxOut > 0 ? round(($day['out'] / $maxOut) * 100) : 0 }}%;{{ $i === 6 ? 'background:#85B7EB;' : '' }}"></div>
+        <div class="panel-body">
+            @php
+                $deptColors = ['#185FA5','#A32D2D','#854F0B','#3B6D11','#0F6E56','#533AB7','#993556','#D85A30'];
+                $maxDept = $departmentStats->max('total') ?: 1;
+            @endphp
+
+            {{-- Chart --}}
+            <div style="display:flex;align-items:flex-end;gap:6px;height:110px;margin-bottom:6px;position:relative;">
+                <div style="position:absolute;left:0;right:0;bottom:0;height:0.5px;background:#E0DDD5;"></div>
+                @foreach($departmentStats as $i => $dept)
+                @php
+                    $color = $deptColors[$i % count($deptColors)];
+                    $heightPct = round(($dept['total'] / $maxDept) * 100);
+                    $shortName = mb_strlen($dept['name']) > 6
+                        ? mb_substr($dept['name'], 0, 6) . '...'
+                        : $dept['name'];
+                @endphp
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;">
+                    <div style="font-size:9px;color:{{ $color }};font-weight:500;margin-bottom:3px;">
+                        {{ number_format($dept['total']) }}
+                    </div>
+                    <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+                        <div style="width:100%;height:{{ $heightPct }}%;background:{{ $color }};border-radius:3px 3px 0 0;min-height:3px;"></div>
+                    </div>
                 </div>
-                <span class="bar-num" style="{{ $i === 6 ? 'color:#85B7EB;' : '' }}">{{ $day['out'] }}</span>
+                @endforeach
             </div>
-            @endforeach
+
+            {{-- X Labels --}}
+            <div style="display:flex;gap:6px;margin-bottom:10px;">
+                @foreach($departmentStats as $i => $dept)
+                @php
+                    $color = $deptColors[$i % count($deptColors)];
+                    $words = explode(' ', $dept['name']);
+                    $shortName = mb_strlen($words[0]) > 8 ? mb_substr($words[0], 0, 8) : $words[0];
+                @endphp
+                <div style="flex:1;font-size:9px;color:{{ $color }};text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    {{ $shortName }}
+                </div>
+                @endforeach
+            </div>
+
+            {{-- Legend --}}
+            <div style="display:flex;flex-wrap:wrap;gap:6px 12px;">
+                @foreach($departmentStats as $i => $dept)
+                @php $color = $deptColors[$i % count($deptColors)]; @endphp
+                <div style="display:flex;align-items:center;gap:4px;">
+                    <div style="width:8px;height:8px;border-radius:2px;background:{{ $color }};flex-shrink:0;"></div>
+                    <span style="font-size:10px;color:#5F5E5A;white-space:nowrap;">{{ $dept['name'] }}</span>
+                </div>
+                @endforeach
+            </div>
         </div>
     </div>
 
-    {{-- Low Stock List --}}
+    {{-- Activity Feed --}}
     <div class="panel">
-        <div class="panel-title">
-            <i class="fas fa-alert-triangle" style="color:#A32D2D;font-size:14px;"></i>
-            <i class="fas fa-exclamation-circle" style="color:#A32D2D;font-size:14px;"></i>
-            สินค้าสต็อกต่ำ
-            <a href="{{ route('reports.low_stock_products') }}" class="see-all" style="margin-left:auto;">ดูทั้งหมด</a>
+        <div class="panel-hd">
+            <i class="fas fa-history" style="color:#185FA5;font-size:14px;"></i>
+            <span class="panel-title">รายการล่าสุด</span>
+            <a href="{{ route('stock_transactions.index') }}" class="panel-link">ดูทั้งหมด <i class="fas fa-arrow-right" style="font-size:9px;"></i></a>
         </div>
-        @forelse($lowStockProducts as $product)
-        @php $currentStock = $product->batches->sum('quantity'); @endphp
-        <div class="low-item">
-            <div style="display:flex;align-items:center;gap:7px;overflow:hidden;">
-                <div class="low-dot" style="background:{{ $currentStock == 0 ? '#A32D2D' : '#854F0B' }};flex-shrink:0;"></div>
-                <span style="font-size:12px;color:#2C2C2A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $product->name }}</span>
+        <div class="panel-body">
+            @forelse($recentTransactions as $transaction)
+            @php
+                $isOut = in_array($transaction->transaction_type, ['out','adjustment_out']);
+                $isIn = in_array($transaction->transaction_type, ['in','adjustment_in']);
+            @endphp
+            <div class="feed-item">
+                <div class="feed-icon" style="background:{{ $isIn ? '#EAF3DE' : ($isOut ? '#FCEBEB' : '#FAEEDA') }};">
+                    <i class="fas fa-{{ $isIn ? 'arrow-down' : ($isOut ? 'arrow-up' : 'sliders-h') }}"
+                       style="color:{{ $isIn ? '#3B6D11' : ($isOut ? '#A32D2D' : '#854F0B') }};"></i>
+                </div>
+                <div style="flex:1;overflow:hidden;">
+                    <div class="feed-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        {{ $transaction->product->name ?? '-' }}
+                    </div>
+                    <div class="feed-sub">
+                        {{ $transaction->department->name ?? '-' }} · {{ $transaction->batch->batch_number ?? '-' }}
+                    </div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="feed-qty" style="color:{{ $isOut ? '#A32D2D' : '#3B6D11' }};">
+                        {{ $isOut ? '-' : '+' }}{{ number_format($transaction->quantity) }}
+                    </div>
+                    <div class="feed-time">
+                        {{ \Carbon\Carbon::parse($transaction->created_at)->timezone('Asia/Bangkok')->format('H:i') }}
+                    </div>
+                </div>
             </div>
-            <span style="font-size:11px;font-weight:500;color:{{ $currentStock == 0 ? '#A32D2D' : '#854F0B' }};flex-shrink:0;margin-left:8px;">
-                {{ number_format($currentStock) }} {{ $product->unit }}
-            </span>
+            @empty
+            <div style="text-align:center;color:#888780;font-size:12px;padding:20px 0;">ไม่มีรายการ</div>
+            @endforelse
         </div>
-        @empty
-        <div style="text-align:center;color:#888780;font-size:12px;padding:20px 0;">
-            <i class="fas fa-check-circle" style="color:#3B6D11;font-size:20px;display:block;margin-bottom:6px;"></i>
-            ไม่มีสินค้าสต็อกต่ำ
-        </div>
-        @endforelse
     </div>
 </div>
 
-{{-- Recent Transactions --}}
-<div class="panel">
-    <div class="panel-title">
-        <i class="fas fa-history" style="color:#185FA5;font-size:14px;"></i>
-        การเคลื่อนไหวสต็อกล่าสุด
-        <a href="{{ route('stock_transactions.index') }}" class="see-all" style="margin-left:auto;">ดูทั้งหมด</a>
+{{-- RECENT TRANSACTIONS TABLE --}}
+<div class="panel" style="margin-bottom:12px;">
+    <div class="panel-hd">
+        <i class="fas fa-table" style="color:#185FA5;font-size:14px;"></i>
+        <span class="panel-title">การเคลื่อนไหวสต็อกล่าสุด</span>
+        <a href="{{ route('stock_transactions.index') }}" class="panel-link">ดูทั้งหมด <i class="fas fa-arrow-right" style="font-size:9px;"></i></a>
     </div>
     <table class="tbl">
         <thead>
@@ -211,58 +455,48 @@
         <tbody>
             @forelse($recentTransactions as $transaction)
             <tr>
-                <td style="color:#888780;">
-                    {{ \Carbon\Carbon::parse($transaction->created_at)->timezone('Asia/Bangkok')->format('d/m/Y H:i') }}
-                </td>
+                <td style="color:#888780;">{{ \Carbon\Carbon::parse($transaction->created_at)->timezone('Asia/Bangkok')->format('d/m/Y H:i') }}</td>
                 <td>
                     @switch($transaction->transaction_type)
-                        @case('in') <span class="badge-in">รับเข้า</span> @break
-                        @case('out') <span class="badge-out">จ่ายออก</span> @break
-                        @case('adjustment_in') <span class="badge-adj-in">ปรับเพิ่ม</span> @break
-                        @case('adjustment_out') <span class="badge-adj-out">ปรับลด</span> @break
+                        @case('in') <span class="badge b-in">รับเข้า</span> @break
+                        @case('out') <span class="badge b-out">จ่ายออก</span> @break
+                        @case('adjustment_in') <span class="badge b-adj-in">ปรับเพิ่ม</span> @break
+                        @case('adjustment_out') <span class="badge b-adj-out">ปรับลด</span> @break
                         @default <span>-</span>
                     @endswitch
                 </td>
-                <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                    {{ $transaction->product->name ?? '-' }}
-                </td>
+                <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $transaction->product->name ?? '-' }}</td>
                 <td style="color:#888780;">{{ $transaction->batch->batch_number ?? '-' }}</td>
-                <td style="font-weight:500;color:{{ in_array($transaction->transaction_type, ['out','adjustment_out']) ? '#A32D2D' : '#3B6D11' }};">
+                <td style="font-weight:500;color:{{ in_array($transaction->transaction_type, ['out','adjustment_out']) ? '#791F1F' : '#27500A' }};">
                     {{ in_array($transaction->transaction_type, ['out','adjustment_out']) ? '-' : '+' }}{{ number_format($transaction->quantity) }}
                 </td>
                 <td style="color:#888780;">{{ $transaction->department->name ?? '-' }}</td>
                 <td>{{ $transaction->user->fullname ?? $transaction->user->username ?? '-' }}</td>
             </tr>
             @empty
-            <tr>
-                <td colspan="7" style="text-align:center;color:#888780;padding:20px;">ไม่มีรายการเคลื่อนไหว</td>
-            </tr>
+            <tr><td colspan="7" style="text-align:center;color:#888780;padding:20px;">ไม่มีรายการเคลื่อนไหว</td></tr>
             @endforelse
         </tbody>
     </table>
 </div>
 
-{{-- Bottom Stats --}}
-<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px;">
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#E6F1FB;"><i class="fas fa-warehouse" style="color:#185FA5;"></i></div>
-        <div class="stat-val">{{ number_format($totalStockQuantity) }}</div>
-        <div class="stat-label">จำนวนสต็อกทั้งหมด (หน่วย)</div>
+{{-- BOTTOM MINI STATS --}}
+<div class="mini-grid">
+    <div class="mini-stat">
+        <div class="mini-icon" style="background:#E6F1FB;"><i class="fas fa-warehouse" style="color:#185FA5;"></i></div>
+        <div><div class="mini-val">{{ number_format($totalStockQuantity) }}</div><div class="mini-label">สต็อกรวม (หน่วย)</div></div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#E6F1FB;"><i class="fas fa-building" style="color:#185FA5;"></i></div>
-        <div class="stat-val">{{ number_format($totalDepartments) }}</div>
-        <div class="stat-label">แผนกทั้งหมด</div>
+    <div class="mini-stat">
+        <div class="mini-icon" style="background:#EAF3DE;"><i class="fas fa-building" style="color:#3B6D11;"></i></div>
+        <div><div class="mini-val">{{ number_format($totalDepartments) }}</div><div class="mini-label">แผนกทั้งหมด</div></div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#E6F1FB;"><i class="fas fa-truck" style="color:#185FA5;"></i></div>
-        <div class="stat-val">{{ number_format($totalSuppliers) }}</div>
-        <div class="stat-label">ผู้จัดจำหน่ายทั้งหมด</div>
+    <div class="mini-stat">
+        <div class="mini-icon" style="background:#FAEEDA;"><i class="fas fa-truck" style="color:#854F0B;"></i></div>
+        <div><div class="mini-val">{{ number_format($totalSuppliers) }}</div><div class="mini-label">ผู้จัดจำหน่าย</div></div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#E6F1FB;"><i class="fas fa-users" style="color:#185FA5;"></i></div>
-        <div class="stat-val">{{ number_format($totalUsers) }}</div>
-        <div class="stat-label">ผู้ใช้งานทั้งหมด</div>
+    <div class="mini-stat">
+        <div class="mini-icon" style="background:#E6F1FB;"><i class="fas fa-users" style="color:#185FA5;"></i></div>
+        <div><div class="mini-val">{{ number_format($totalUsers) }}</div><div class="mini-label">ผู้ใช้งาน</div></div>
     </div>
 </div>
 @endsection
