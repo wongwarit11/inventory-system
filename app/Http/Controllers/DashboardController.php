@@ -20,7 +20,7 @@ class DashboardController extends Controller
     /**
      * Display the dashboard.
      */
-    public function index()
+    public function index(Request $request)
     {
         // สถิติสินค้าคงคลัง
         $totalProducts = Product::where('status', 'active')->count();
@@ -78,10 +78,25 @@ class DashboardController extends Controller
                                             ->take(5)
                                             ->get();
         
-        // ข้อมูลการเบิกแยกตามแผนก
-        $departmentStats = \App\Models\StockTransaction::where('transaction_type', 'out')
+        // ข้อมูลการเบิกแยกตามแผนก พร้อม filter ช่วงเวลา
+        $deptPeriod = $request->input('dept_period', '30'); // default 30 วัน
+
+        $deptQuery = \App\Models\StockTransaction::where('transaction_type', 'out')
             ->whereNotNull('department_id')
-            ->with('department')
+            ->with('department');
+
+        if ($deptPeriod === '7') {
+            $deptQuery->where('created_at', '>=', \Carbon\Carbon::now()->subDays(7));
+        } elseif ($deptPeriod === '30') {
+            $deptQuery->where('created_at', '>=', \Carbon\Carbon::now()->subDays(30));
+        } elseif ($deptPeriod === '90') {
+            $deptQuery->where('created_at', '>=', \Carbon\Carbon::now()->subDays(90));
+        } elseif ($deptPeriod === '365') {
+            $deptQuery->where('created_at', '>=', \Carbon\Carbon::now()->subDays(365));
+        }
+        // ถ้า 'all' ไม่ต้อง filter
+
+        $departmentStats = $deptQuery
             ->selectRaw('department_id, SUM(quantity) as total_out')
             ->groupBy('department_id')
             ->orderByDesc('total_out')
@@ -93,13 +108,13 @@ class DashboardController extends Controller
                     'total' => (int) $item->total_out,
                 ];
             });
-
+        
         // สินค้าสต็อกต่ำกว่าจุดต่ำสุด
         $lowStockTable = Product::where('minimum_stock_level', '>', 0)
             ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
             ->with('batches', 'supplier', 'category')
             ->orderBy('name')
-            ->take(5)
+            ->take(10)
             ->get()
             ->map(function($product) {
                 $currentStock = $product->batches->sum('quantity');
@@ -112,7 +127,8 @@ class DashboardController extends Controller
             'totalProducts', 'totalBatches', 'totalStockQuantity',
             'lowStockProductsCount', 'expiringBatchesCount', 'pendingRequisitionsCount',
             'totalDepartments', 'totalSuppliers', 'totalManufacturers', 'totalUsers',
-            'chartData', 'lowStockProducts', 'recentTransactions', 'departmentStats', 'lowStockTable'
+            'chartData', 'lowStockProducts', 'recentTransactions',
+            'departmentStats', 'lowStockTable', 'deptPeriod'
         ));
     }
 }
