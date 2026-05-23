@@ -63,9 +63,9 @@ body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
 .items-table tbody tr.odd { background: #FFFFFF; }
 .items-table tbody tr.even { background: #F7F5EF; }
 .items-table tbody td { padding: 2px 4px; border-bottom: 0.5px solid #E0DDD5; }
-.items-table tfoot td { padding: 8px 10px; border-top: 1.5px solid #185FA5; }
+.items-table tfoot td { padding: 2px 4px; border-top: 0.5px solid #185FA5; }
 
-.note-box { margin-top: 10px; padding: 8px 12px; background: #EEF5FC; border-left: 3px solid #185FA5; border-radius: 0 4px 4px 0; font-size: 11px; color: #444441; }
+.note-box { margin-top: 6px; padding: 2px 4px; background: #EEF5FC; border-left: 3px solid #185FA5; border-radius: 0 4px 4px 0; font-size: 11px; color: #444441; }
 
 .sig-section { width: 100%; margin-top: 28px; }
 .sig-cell { width: 33%; text-align: center; vertical-align: top; padding: 0 10px; }
@@ -103,20 +103,22 @@ body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
 <hr class="divider">
 
 {{-- Supplier Info --}}
-<table style="width: auto; border-collapse: collapse; margin-bottom: 14px;">
+<table style="width: 50%; border-collapse: collapse; margin-bottom: 14px;">
   <tr>
-    <td>
-      <div class="info-box">
-        <div class="info-box-header"><span class="info-box-header-text">ข้อมูลผู้จัดจำหน่าย</span></div>
-        <div class="info-box-body">
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr><td class="info-key">บริษัท</td><td class="info-val">{{ $supplier->name ?? '-' }}</td></tr>
-            <tr><td class="info-key">ที่อยู่</td><td class="info-val">{{ $supplier->address ?? '-' }}</td></tr>
-            <tr><td class="info-key">โทรศัพท์</td><td class="info-val">{{ $supplier->phone ?? '-' }}</td></tr>
-            <tr><td class="info-key">อีเมล</td><td class="info-val">{{ $supplier->email ?? '-' }}</td></tr>
-          </table>
-        </div>
-      </div>
+    <td style="background: #E6F1FB; border: 0.5px solid #B5D4F4; border-radius: 6px; padding: 10px 14px;">
+      <p style="font-size: 12px; font-weight: bold; color: #0C447C; margin: 0 0 6px 0;">
+        <i class="fas fa-truck me-2"></i> ผู้จัดจำหน่าย
+      </p>
+      <p style="font-size: 13px; font-weight: bold; color: #2C2C2A; margin: 0 0 3px 0;">{{ $supplier->name ?? '-' }}</p>
+      @if(!empty($supplier->address))
+      <p style="font-size: 11px; color: #5F5E5A; margin: 0 0 2px 0;">{{ $supplier->address }}</p>
+      @endif
+      @if(!empty($supplier->phone))
+      <p style="font-size: 11px; color: #5F5E5A; margin: 0 0 2px 0;">โทร: {{ $supplier->phone }}</p>
+      @endif
+      @if(!empty($supplier->email))
+      <p style="font-size: 11px; color: #5F5E5A; margin: 0;">อีเมล: {{ $supplier->email }}</p>
+      @endif
     </td>
   </tr>
 </table>
