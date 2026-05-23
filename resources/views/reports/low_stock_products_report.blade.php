@@ -198,11 +198,9 @@ function exportSelectedPdf() {
     const productIds = Array.from(checked).map(cb => cb.value);
     const supplierId = '{{ request('supplier_id') }}';
 
-    // ส่งข้อมูลไปยัง route
     const form = document.createElement('form');
     form.method = 'GET';
-    form.action = '{{ route('reports.low_stock_products.purchase_order_selected') }}';
-    form.target = '_blank';
+    form.action = '{{ route('reports.low_stock_products.purchase_order_preview') }}';
 
     productIds.forEach(id => {
         const input = document.createElement('input');

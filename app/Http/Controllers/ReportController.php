@@ -276,4 +276,66 @@ class ReportController extends Controller
 
         return $pdf->download('purchase_order_selected_' . $date . '.pdf');
     }
+    public function purchaseOrderPreview(Request $request)
+    {
+        if ($response = $this->authorizeReportAccess()) {
+            return $response;
+        }
+
+        $productIds = $request->input('product_ids', []);
+        $supplierId = $request->input('supplier_id');
+
+        if (empty($productIds)) {
+            return redirect()->route('reports.low_stock_products')
+                            ->with('error', 'กรุณาเลือกสินค้าอย่างน้อย 1 รายการ');
+        }
+
+        $products = Product::whereIn('id', $productIds)
+                    ->with('batches', 'supplier', 'category')
+                    ->orderBy('name')
+                    ->get()
+                    ->map(function($product) {
+                        $currentStock = $product->batches->sum('quantity');
+                        $product->current_stock = $currentStock;
+                        $product->suggested_qty = max(
+                            $product->minimum_stock_level - $currentStock,
+                            $product->minimum_stock_level
+                        );
+                        return $product;
+                    });
+
+        $supplier = $supplierId ? \App\Models\Supplier::find($supplierId) : null;
+
+        return view('reports.purchase_order_preview', compact('products', 'supplier', 'supplierId', 'productIds'));
+    }
+
+    public function exportPurchaseOrderPreview(Request $request)
+    {
+        if ($response = $this->authorizeReportAccess()) {
+            return $response;
+        }
+
+        $productIds = $request->input('product_ids', []);
+        $quantities = $request->input('quantities', []);
+        $supplierId = $request->input('supplier_id');
+
+        $products = Product::whereIn('id', $productIds)
+                    ->with('batches', 'supplier')
+                    ->orderBy('name')
+                    ->get()
+                    ->map(function($product) use ($quantities) {
+                        $product->order_quantity = (int) ($quantities[$product->id] ?? $product->minimum_stock_level);
+                        return $product;
+                    });
+
+        $supplier = $supplierId ? \App\Models\Supplier::find($supplierId) : null;
+
+        $date = \Carbon\Carbon::now()->format('Ymd');
+        $poNumber = 'PO-' . $date . '-' . str_pad(rand(1, 999), 4, '0', STR_PAD_LEFT);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.purchase_order_pdf', compact('products', 'supplier', 'poNumber'));
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download('purchase_order_' . $date . '.pdf');
+    }
 }
