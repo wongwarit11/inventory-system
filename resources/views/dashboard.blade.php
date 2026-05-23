@@ -334,7 +334,17 @@
         <div class="panel-hd">
             <i class="fas fa-chart-bar" style="color:#185FA5;font-size:14px;"></i>
             <span class="panel-title">การเบิกใช้สินค้าแยกตามแผนก</span>
-            <span style="font-size:10px;background:#E6F1FB;color:#0C447C;padding:2px 8px;border-radius:99px;">จำนวนจ่ายออกรวม</span>
+            {{-- Period Filter --}}
+            <div style="display:flex;gap:4px;">
+                @foreach(['7'=>'7 วัน','30'=>'30 วัน','90'=>'3 เดือน','365'=>'1 ปี','all'=>'ทั้งหมด'] as $val => $label)
+                <a href="{{ route('dashboard') }}?dept_period={{ $val }}"
+                style="font-size:10px;padding:2px 8px;border-radius:99px;text-decoration:none;
+                        background:{{ $deptPeriod == $val ? '#185FA5' : '#E6F1FB' }};
+                        color:{{ $deptPeriod == $val ? 'white' : '#0C447C' }};">
+                    {{ $label }}
+                </a>
+                @endforeach
+            </div>
         </div>
         <div class="panel-body">
             @php
@@ -342,6 +352,12 @@
                 $maxDept = $departmentStats->max('total') ?: 1;
             @endphp
 
+            @if($departmentStats->isEmpty())
+            <div style="text-align:center;color:#888780;font-size:12px;padding:30px 0;">
+                <i class="fas fa-chart-bar" style="font-size:24px;display:block;margin-bottom:8px;color:#D3D1C7;"></i>
+                ไม่มีข้อมูลในช่วงเวลานี้
+            </div>
+            @else
             {{-- Chart --}}
             <div style="display:flex;align-items:flex-end;gap:6px;height:110px;margin-bottom:6px;position:relative;">
                 <div style="position:absolute;left:0;right:0;bottom:0;height:0.5px;background:#E0DDD5;"></div>
@@ -349,9 +365,6 @@
                 @php
                     $color = $deptColors[$i % count($deptColors)];
                     $heightPct = round(($dept['total'] / $maxDept) * 100);
-                    $shortName = mb_strlen($dept['name']) > 6
-                        ? mb_substr($dept['name'], 0, 6) . '...'
-                        : $dept['name'];
                 @endphp
                 <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;">
                     <div style="font-size:9px;color:{{ $color }};font-weight:500;margin-bottom:3px;">
@@ -388,6 +401,7 @@
                 </div>
                 @endforeach
             </div>
+            @endif
         </div>
     </div>
 
