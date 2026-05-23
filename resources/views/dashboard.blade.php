@@ -433,48 +433,61 @@
     </div>
 </div>
 
-{{-- RECENT TRANSACTIONS TABLE --}}
+{{-- LOW STOCK TABLE --}}
 <div class="panel" style="margin-bottom:12px;">
     <div class="panel-hd">
-        <i class="fas fa-table" style="color:#185FA5;font-size:14px;"></i>
-        <span class="panel-title">การเคลื่อนไหวสต็อกล่าสุด</span>
-        <a href="{{ route('stock_transactions.index') }}" class="panel-link">ดูทั้งหมด <i class="fas fa-arrow-right" style="font-size:9px;"></i></a>
+        <i class="fas fa-exclamation-triangle" style="color:#A32D2D;font-size:14px;"></i>
+        <span class="panel-title">สินค้าสต็อกต่ำกว่าจุดต่ำสุด — ต้องสั่งซื้อ</span>
+        <a href="{{ route('reports.low_stock_products') }}" class="panel-link" style="background:#FCEBEB;color:#A32D2D;">
+            ดูทั้งหมด <i class="fas fa-arrow-right" style="font-size:9px;"></i>
+        </a>
     </div>
     <table class="tbl">
         <thead>
             <tr>
-                <th style="width:110px;">วันที่/เวลา</th>
-                <th style="width:80px;">ประเภท</th>
-                <th>สินค้า</th>
-                <th style="width:80px;">ล็อต</th>
-                <th style="width:60px;">จำนวน</th>
-                <th style="width:120px;">แผนก</th>
-                <th>ผู้ทำรายการ</th>
+                <th>#</th>
+                <th>รหัสสินค้า</th>
+                <th>ชื่อสินค้า</th>
+                <th>หมวดหมู่</th>
+                <th>ผู้จัดจำหน่าย</th>
+                <th style="width:80px;">คงเหลือ</th>
+                <th style="width:80px;">จุดต่ำสุด</th>
+                <th style="width:90px;">จำนวนสั่งซื้อ</th>
+                <th style="width:60px;">หน่วย</th>
+                <th style="width:80px;">สถานะ</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($recentTransactions as $transaction)
+            @forelse($lowStockTable as $i => $product)
             <tr>
-                <td style="color:#888780;">{{ \Carbon\Carbon::parse($transaction->created_at)->timezone('Asia/Bangkok')->format('d/m/Y H:i') }}</td>
+                <td style="color:#888780;">{{ $i + 1 }}</td>
+                <td style="color:#185FA5;font-weight:500;">{{ $product->product_code }}</td>
+                <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    {{ $product->name }}
+                </td>
+                <td style="color:#888780;">{{ $product->category->name ?? '-' }}</td>
+                <td style="color:#888780;">{{ $product->supplier->name ?? '-' }}</td>
+                <td style="font-weight:500;color:{{ $product->current_stock == 0 ? '#791F1F' : '#633806' }};">
+                    {{ number_format($product->current_stock) }}
+                </td>
+                <td style="color:#888780;">{{ number_format($product->minimum_stock_level) }}</td>
+                <td style="font-weight:500;color:#185FA5;">{{ number_format($product->order_qty) }}</td>
+                <td style="color:#888780;">{{ $product->unit }}</td>
                 <td>
-                    @switch($transaction->transaction_type)
-                        @case('in') <span class="badge b-in">รับเข้า</span> @break
-                        @case('out') <span class="badge b-out">จ่ายออก</span> @break
-                        @case('adjustment_in') <span class="badge b-adj-in">ปรับเพิ่ม</span> @break
-                        @case('adjustment_out') <span class="badge b-adj-out">ปรับลด</span> @break
-                        @default <span>-</span>
-                    @endswitch
+                    @if($product->current_stock == 0)
+                        <span class="badge b-out">หมดแล้ว</span>
+                    @else
+                        <span class="badge b-adj-out">ใกล้หมด</span>
+                    @endif
                 </td>
-                <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $transaction->product->name ?? '-' }}</td>
-                <td style="color:#888780;">{{ $transaction->batch->batch_number ?? '-' }}</td>
-                <td style="font-weight:500;color:{{ in_array($transaction->transaction_type, ['out','adjustment_out']) ? '#791F1F' : '#27500A' }};">
-                    {{ in_array($transaction->transaction_type, ['out','adjustment_out']) ? '-' : '+' }}{{ number_format($transaction->quantity) }}
-                </td>
-                <td style="color:#888780;">{{ $transaction->department->name ?? '-' }}</td>
-                <td>{{ $transaction->user->fullname ?? $transaction->user->username ?? '-' }}</td>
             </tr>
             @empty
-            <tr><td colspan="7" style="text-align:center;color:#888780;padding:20px;">ไม่มีรายการเคลื่อนไหว</td></tr>
+            <tr>
+                <td colspan="10" style="text-align:center;color:#888780;padding:20px;">
+                    <i class="fas fa-check-circle" style="color:#3B6D11;margin-right:6px;"></i>
+                    ไม่มีสินค้าสต็อกต่ำ
+                </td>
+            </tr>
             @endforelse
         </tbody>
     </table>

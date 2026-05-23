@@ -94,11 +94,25 @@ class DashboardController extends Controller
                 ];
             });
 
+        // สินค้าสต็อกต่ำกว่าจุดต่ำสุด
+        $lowStockTable = Product::where('minimum_stock_level', '>', 0)
+            ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
+            ->with('batches', 'supplier', 'category')
+            ->orderBy('name')
+            ->take(5)
+            ->get()
+            ->map(function($product) {
+                $currentStock = $product->batches->sum('quantity');
+                $product->current_stock = $currentStock;
+                $product->order_qty = max($product->minimum_stock_level - $currentStock, $product->minimum_stock_level);
+                return $product;
+            });
+
         return view('dashboard', compact(
             'totalProducts', 'totalBatches', 'totalStockQuantity',
             'lowStockProductsCount', 'expiringBatchesCount', 'pendingRequisitionsCount',
             'totalDepartments', 'totalSuppliers', 'totalManufacturers', 'totalUsers',
-            'chartData', 'lowStockProducts', 'recentTransactions', 'departmentStats'
+            'chartData', 'lowStockProducts', 'recentTransactions', 'departmentStats', 'lowStockTable'
         ));
     }
 }
