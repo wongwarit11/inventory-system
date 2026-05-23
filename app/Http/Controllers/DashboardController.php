@@ -13,6 +13,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\StockTransaction;
 
 class DashboardController extends Controller
 {
@@ -27,7 +28,6 @@ class DashboardController extends Controller
         $totalStockQuantity = Batch::sum('quantity');
 
         // สินค้าที่สต็อกต่ำกว่าจุดต่ำสุด
-        // แก้ไข Query เพื่อหลีกเลี่ยงข้อผิดพลาด "Non-grouping field used in HAVING clause" และ TypeError
         $lowStockProductsCount = Product::where('minimum_stock_level', '>', 0)
                                         ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
                                         ->count();
@@ -40,26 +40,49 @@ class DashboardController extends Controller
                                     ->where('quantity', '>', 0)
                                     ->count();
 
-        // รายการใบขอเบิกที่รอการอนุมัติ (Pending Requisitions)
+        // รายการใบขอเบิกที่รอการอนุมัติ
         $pendingRequisitionsCount = Requisition::where('status', 'pending')->count();
 
-        // สถิติอื่นๆ (ตัวอย่าง)
+        // สถิติอื่นๆ
         $totalDepartments = Department::where('status', 'active')->count();
         $totalSuppliers = Supplier::where('status', 'active')->count();
         $totalManufacturers = Manufacturer::where('status', 'active')->count();
         $totalUsers = User::where('status', 'active')->count();
 
+        // ข้อมูลกราฟ 7 วันล่าสุด
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i);
+            $chartData[] = [
+                'date' => $date->format('d/m'),
+                'out' => StockTransaction::where('transaction_type', 'out')
+                            ->whereDate('created_at', $date)
+                            ->sum('quantity'),
+                'in' => StockTransaction::where('transaction_type', 'in')
+                            ->whereDate('created_at', $date)
+                            ->sum('quantity'),
+            ];
+        }
+
+        // สินค้าสต็อกต่ำ 5 รายการ
+        $lowStockProducts = Product::where('minimum_stock_level', '>', 0)
+                                    ->whereRaw('products.minimum_stock_level >= (SELECT COALESCE(SUM(batches.quantity), 0) FROM batches WHERE batches.product_id = products.id)')
+                                    ->with('batches')
+                                    ->orderBy('name')
+                                    ->take(5)
+                                    ->get();
+
+        // การเคลื่อนไหวสต็อกล่าสุด 5 รายการ
+        $recentTransactions = StockTransaction::with(['product', 'batch', 'user', 'department'])
+                                            ->orderBy('created_at', 'desc')
+                                            ->take(5)
+                                            ->get();
+
         return view('dashboard', compact(
-            'totalProducts',
-            'totalBatches',
-            'totalStockQuantity',
-            'lowStockProductsCount',
-            'expiringBatchesCount',
-            'pendingRequisitionsCount',
-            'totalDepartments',
-            'totalSuppliers',
-            'totalManufacturers',
-            'totalUsers'
+            'totalProducts', 'totalBatches', 'totalStockQuantity',
+            'lowStockProductsCount', 'expiringBatchesCount', 'pendingRequisitionsCount',
+            'totalDepartments', 'totalSuppliers', 'totalManufacturers', 'totalUsers',
+            'chartData', 'lowStockProducts', 'recentTransactions'
         ));
     }
 }
