@@ -73,50 +73,68 @@
 </div>
 
 {{-- Summary Cards --}}
-<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;">
-    <div class="stat-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="stat-icon" style="background:#E6F1FB;">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px;">
+
+    <a href="{{ route('products.index') }}" style="background:white;border:0.5px solid #B5D4F4;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:10px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:20px;">
                 <i class="fas fa-boxes" style="color:#185FA5;"></i>
             </div>
-            <span class="stat-badge" style="background:#E6F1FB;color:#185FA5;">Active</span>
+            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#E6F1FB;color:#0C447C;">Active {{ number_format($totalProducts) }}</span>
         </div>
-        <div class="stat-val">{{ number_format($totalProducts) }}</div>
-        <div class="stat-label">รายการสินค้าทั้งหมด</div>
-    </div>
+        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#0C447C;">{{ number_format($totalProducts) }}</div>
+        <div style="font-size:12px;margin-bottom:14px;color:#185FA5;">รายการสินค้าทั้งหมด</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #B5D4F4;">
+            <span style="font-size:11px;color:#888780;">ล็อตสินค้า {{ number_format($totalBatches) }} ล็อต</span>
+            <span style="font-size:11px;color:#185FA5;display:flex;align-items:center;gap:4px;">ดูทั้งหมด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        </div>
+    </a>
 
-    <div class="stat-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="stat-icon" style="background:#FCEBEB;">
+    <a href="{{ route('reports.low_stock_products') }}" style="background:white;border:0.5px solid #F7C1C1;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:10px;background:#FCEBEB;display:flex;align-items:center;justify-content:center;font-size:20px;">
                 <i class="fas fa-exclamation-triangle" style="color:#A32D2D;"></i>
             </div>
-            <span class="stat-badge" style="background:#FCEBEB;color:#A32D2D;">ต้องสั่งซื้อ</span>
+            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#FCEBEB;color:#791F1F;">ต้องสั่งซื้อ</span>
         </div>
-        <div class="stat-val" style="color:#A32D2D;">{{ number_format($lowStockProductsCount) }}</div>
-        <div class="stat-label">สินค้าสต็อกต่ำกว่าจุดต่ำสุด</div>
-    </div>
+        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#791F1F;">{{ number_format($lowStockProductsCount) }}</div>
+        <div style="font-size:12px;margin-bottom:14px;color:#A32D2D;">สินค้าสต็อกต่ำกว่าจุดต่ำสุด</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #F7C1C1;">
+            <span style="font-size:11px;color:#888780;">อัปเดตล่าสุดวันนี้</span>
+            <span style="font-size:11px;color:#A32D2D;display:flex;align-items:center;gap:4px;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        </div>
+    </a>
 
-    <div class="stat-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="stat-icon" style="background:#FAEEDA;">
+    <a href="{{ route('reports.expiring_batches') }}" style="background:white;border:0.5px solid #FAC775;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:10px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-size:20px;">
                 <i class="fas fa-calendar-times" style="color:#854F0B;"></i>
             </div>
-            <span class="stat-badge" style="background:#FAEEDA;color:#854F0B;">ภายใน 30 วัน</span>
+            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#FAEEDA;color:#633806;">ภายใน 30 วัน</span>
         </div>
-        <div class="stat-val" style="color:#854F0B;">{{ number_format($expiringBatchesCount) }}</div>
-        <div class="stat-label">ล็อตใกล้หมดอายุ</div>
-    </div>
+        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#633806;">{{ number_format($expiringBatchesCount) }}</div>
+        <div style="font-size:12px;margin-bottom:14px;color:#854F0B;">ล็อตใกล้หมดอายุ</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #FAC775;">
+            <span style="font-size:11px;color:#888780;">ภายใน 30 วันข้างหน้า</span>
+            <span style="font-size:11px;color:#854F0B;display:flex;align-items:center;gap:4px;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        </div>
+    </a>
 
-    <div class="stat-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="stat-icon" style="background:#EAF3DE;">
-                <i class="fas fa-file-check" style="color:#3B6D11;"></i>
+    <a href="{{ route('requisitions.index') }}" style="background:white;border:0.5px solid #C0DD97;border-radius:12px;padding:18px;text-decoration:none;display:block;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:10px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:20px;">
+                <i class="fas fa-file-invoice" style="color:#3B6D11;"></i>
             </div>
-            <span class="stat-badge" style="background:#EAF3DE;color:#3B6D11;">Pending</span>
+            <span style="font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;background:#EAF3DE;color:#27500A;">รอดำเนินการ</span>
         </div>
-        <div class="stat-val">{{ number_format($pendingRequisitionsCount) }}</div>
-        <div class="stat-label">ใบขอเบิกรอดำเนินการ</div>
-    </div>
+        <div style="font-size:32px;font-weight:600;line-height:1;margin-bottom:4px;color:#27500A;">{{ number_format($pendingRequisitionsCount) }}</div>
+        <div style="font-size:12px;margin-bottom:14px;color:#3B6D11;">ใบขอเบิกค้างอนุมัติ</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:0.5px solid #C0DD97;">
+            <span style="font-size:11px;color:#888780;">รออนุมัติ {{ number_format($pendingRequisitionsCount) }} รายการ</span>
+            <span style="font-size:11px;color:#3B6D11;display:flex;align-items:center;gap:4px;">ดูรายละเอียด <i class="fas fa-arrow-right" style="font-size:10px;"></i></span>
+        </div>
+    </a>
+
 </div>
 
 {{-- Mid Section: Chart + Low Stock --}}
