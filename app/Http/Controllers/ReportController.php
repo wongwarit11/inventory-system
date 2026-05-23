@@ -245,4 +245,35 @@ class ReportController extends Controller
 
         return $pdf->download('purchase_order_' . $supplier->name . '_' . $date . '.pdf');
     }
+
+    public function exportPurchaseOrderSelected(Request $request)
+    {
+        if ($response = $this->authorizeReportAccess()) {
+            return $response;
+        }
+
+        $productIds = $request->input('product_ids', []);
+        $supplierId = $request->input('supplier_id');
+
+        $products = Product::whereIn('id', $productIds)
+                    ->with('batches', 'supplier')
+                    ->orderBy('name')
+                    ->get()
+                    ->map(function($product) {
+                        $currentStock = $product->batches->sum('quantity');
+                        $product->order_quantity = max($product->minimum_stock_level - $currentStock, $product->minimum_stock_level);
+                        return $product;
+                    });
+
+        $supplier = $supplierId ? \App\Models\Supplier::find($supplierId) : null;
+
+        $date = \Carbon\Carbon::now()->format('Ymd');
+        $count = count($productIds);
+        $poNumber = 'PO-' . $date . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.purchase_order_pdf', compact('products', 'supplier', 'poNumber'));
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download('purchase_order_selected_' . $date . '.pdf');
+    }
 }
