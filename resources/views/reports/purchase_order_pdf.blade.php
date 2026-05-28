@@ -6,77 +6,77 @@
 @font-face { font-family: 'THSarabunNew'; font-style: normal; font-weight: normal; src: url('{{ storage_path("fonts/THSarabunNew.ttf") }}') format('truetype'); }
 @font-face { font-family: 'THSarabunNew'; font-style: normal; font-weight: bold; src: url('{{ storage_path("fonts/THSarabunNew Bold.ttf") }}') format('truetype'); }
 * { font-family: 'THSarabunNew', sans-serif; box-sizing: border-box; }
-body { font-size: 14px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
+body { font-size: 16px; color: #2C2C2A; padding: 28px 32px; margin: 0; }
 
 .header-table { width: 100%; margin-bottom: 0; }
 .divider { border: none; border-top: 2.5px solid #185FA5; margin: 10px 0 14px 0; }
 .divider-thin { border: none; border-top: 0.5px solid #D3D1C7; margin: 12px 0; }
 
-.org-name { font-size: 17px; font-weight: bold; color: #0C447C; margin: 0 0 2px 0; }
-.org-sub { font-size: 11px; color: #5F5E5A; margin: 1px 0; }
+.org-name { font-size: 20px; font-weight: bold; color: #0C447C; margin: 0 0 2px 0; }
+.org-sub { font-size: 14px; color: #5F5E5A; margin: 1px 0; }
 
-.doc-title { font-size: 22px; font-weight: bold; color: #185FA5; margin: 0; }
-.doc-subtitle { font-size: 11px; color: #888780; margin: 1px 0 6px 0; }
-.doc-number-badge { display: inline-block; background: #E6F1FB; padding: 4px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #0C447C; border: 1px solid #B5D4F4; }
-.doc-date { font-size: 11px; color: #5F5E5A; margin-top: 4px; }
+.doc-title { font-size: 26px; font-weight: bold; color: #185FA5; margin: 0; }
+.doc-subtitle { font-size: 14px; color: #888780; margin: 1px 0 6px 0; }
+.doc-number-badge { display: inline-block; background: #E6F1FB; padding: 4px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; color: #0C447C; border: 1px solid #B5D4F4; }
+.doc-date { font-size: 14px; color: #5F5E5A; margin-top: 4px; }
 
-.info-box { 
-  border-radius: 6px; 
-  overflow: hidden; 
-  border: 1px solid #B5D4F4; 
+.info-box {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #B5D4F4;
   width: auto;
   display: inline-block;
 }
-.info-box-header { 
-  background: #185FA5; 
-  padding: 5px 10px; 
+.info-box-header {
+  background: #185FA5;
+  padding: 5px 10px;
 }
-.info-box-header-text { 
-  font-size: 12px; 
-  color: white; 
-  font-weight: bold; 
-  letter-spacing: 0.02em; 
+.info-box-header-text {
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 0.02em;
 }
-.info-box-body { 
-  background: #F7F5EF; 
-  padding: 6px 10px; 
+.info-box-body {
+  background: #F7F5EF;
+  padding: 6px 10px;
 }
-.info-key { 
-  color: #888780; 
-  font-size: 11px; 
-  width: 72px; 
-  vertical-align: top; 
-  padding: 1px 0; 
+.info-key {
+  color: #888780;
+  font-size: 14px;
+  width: 72px;
+  vertical-align: top;
+  padding: 2px 0;
 }
-.info-val { 
-  font-size: 11px; 
-  font-weight: bold; 
-  color: #2C2C2A; 
-  padding: 1px 0; 
+.info-val {
+  font-size: 15px;
+  font-weight: bold;
+  color: #2C2C2A;
+  padding: 2px 0;
 }
 
-.section-title { font-size: 13px; font-weight: bold; color: #185FA5; border-bottom: 1.5px solid #B5D4F4; padding-bottom: 5px; margin-bottom: 10px; }
+.section-title { font-size: 16px; font-weight: bold; color: #185FA5; border-bottom: 1.5px solid #B5D4F4; padding-bottom: 5px; margin-bottom: 10px; }
 
-.items-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.items-table { width: 100%; border-collapse: collapse; font-size: 15px; }
 .items-table thead tr { background: #185FA5; color: white; }
-.items-table thead th { padding: 8px 10px; font-weight: bold; }
+.items-table thead th { padding: 10px 12px; font-weight: bold; }
 .items-table tbody tr.odd { background: #FFFFFF; }
 .items-table tbody tr.even { background: #F7F5EF; }
-.items-table tbody td { padding: 2px 4px; border-bottom: 0.5px solid #E0DDD5; }
-.items-table tfoot td { padding: 2px 4px; border-top: 0.5px solid #185FA5; }
+.items-table tbody td { padding: 8px 10px; border-bottom: 0.5px solid #E0DDD5; }
+.items-table tfoot td { padding: 8px 10px; border-top: 0.5px solid #185FA5; }
 
-.note-box { margin-top: 6px; padding: 2px 4px; background: #EEF5FC; border-left: 3px solid #185FA5; border-radius: 0 4px 4px 0; font-size: 11px; color: #444441; }
+.note-box { margin-top: 8px; padding: 8px 12px; background: #EEF5FC; border-left: 3px solid #185FA5; border-radius: 0 4px 4px 0; font-size: 14px; color: #444441; }
 
 .sig-section { width: 100%; margin-top: 28px; }
 .sig-cell { width: 33%; text-align: center; vertical-align: top; padding: 0 10px; }
 .sig-space { height: 48px; }
 .sig-line { border-top: 1px solid #888780; padding-top: 7px; }
-.sig-name { font-size: 12px; font-weight: bold; color: #2C2C2A; }
-.sig-sub { font-size: 11px; color: #888780; margin-top: 2px; }
-.sig-date { font-size: 11px; color: #B4B2A9; margin-top: 3px; }
+.sig-name { font-size: 16px; font-weight: bold; color: #2C2C2A; }
+.sig-sub { font-size: 14px; color: #888780; margin-top: 2px; }
+.sig-date { font-size: 14px; color: #B4B2A9; margin-top: 3px; }
 
 .footer-table { width: 100%; margin-top: 14px; padding-top: 7px; border-top: 0.5px solid #D3D1C7; }
-.footer-text { font-size: 10px; color: #B4B2A9; }
+.footer-text { font-size: 13px; color: #B4B2A9; }
 </style>
 </head>
 <body>
