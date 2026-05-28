@@ -143,33 +143,39 @@
 
 @push('scripts')
 <script>
-const checkAll = document.getElementById('checkAll');
-const selectionAlert = document.getElementById('selectionAlert');
-const selectionCount = document.getElementById('selectionCount');
-const selectedCount = document.getElementById('selectedCount');
+const STORAGE_KEY = 'low_stock_selected_{{ request('supplier_id') }}_{{ request('search') }}';
 
-// เลือกทั้งหมด
-checkAll.addEventListener('change', function() {
+// โหลด selected ids จาก localStorage
+function loadSelected() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch(e) {
+        return [];
+    }
+}
+
+// บันทึก selected ids ลง localStorage
+function saveSelected(ids) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+}
+
+// อัปเดต UI ทั้งหมด
+function updateUI() {
+    const ids = loadSelected();
+    const count = ids.length;
+
+    // อัปเดต checkboxes ในหน้านี้
     document.querySelectorAll('.product-checkbox').forEach(cb => {
-        cb.checked = this.checked;
+        cb.checked = ids.includes(cb.value);
     });
-    updateSelection();
-});
 
-// เลือกรายการ
-document.querySelectorAll('.product-checkbox').forEach(cb => {
-    cb.addEventListener('change', function() {
-        updateSelection();
-        const allChecked = document.querySelectorAll('.product-checkbox:not(:checked)').length === 0;
-        checkAll.checked = allChecked;
-        checkAll.indeterminate = !allChecked && document.querySelectorAll('.product-checkbox:checked').length > 0;
-    });
-});
+    // อัปเดต checkAll
+    const allCbs = document.querySelectorAll('.product-checkbox');
+    const allChecked = allCbs.length > 0 && Array.from(allCbs).every(cb => ids.includes(cb.value));
+    checkAll.checked = allChecked;
+    checkAll.indeterminate = !allChecked && count > 0 && Array.from(allCbs).some(cb => ids.includes(cb.value));
 
-function updateSelection() {
-    const checked = document.querySelectorAll('.product-checkbox:checked');
-    const count = checked.length;
-
+    // อัปเดต selection alert
     if (count > 0) {
         selectionAlert.classList.remove('d-none');
         selectionCount.textContent = count;
@@ -181,28 +187,60 @@ function updateSelection() {
     }
 }
 
+const checkAll = document.getElementById('checkAll');
+const selectionAlert = document.getElementById('selectionAlert');
+const selectionCount = document.getElementById('selectionCount');
+const selectedCount = document.getElementById('selectedCount');
+
+// เลือกทั้งหมดในหน้านี้
+checkAll.addEventListener('change', function() {
+    const ids = loadSelected();
+    document.querySelectorAll('.product-checkbox').forEach(cb => {
+        cb.checked = this.checked;
+        if (this.checked) {
+            if (!ids.includes(cb.value)) ids.push(cb.value);
+        } else {
+            const idx = ids.indexOf(cb.value);
+            if (idx > -1) ids.splice(idx, 1);
+        }
+    });
+    saveSelected(ids);
+    updateUI();
+});
+
+// เลือกรายการเดียว
+document.querySelectorAll('.product-checkbox').forEach(cb => {
+    cb.addEventListener('change', function() {
+        const ids = loadSelected();
+        if (this.checked) {
+            if (!ids.includes(this.value)) ids.push(this.value);
+        } else {
+            const idx = ids.indexOf(this.value);
+            if (idx > -1) ids.splice(idx, 1);
+        }
+        saveSelected(ids);
+        updateUI();
+    });
+});
+
 function clearSelection() {
-    document.querySelectorAll('.product-checkbox').forEach(cb => cb.checked = false);
-    checkAll.checked = false;
-    checkAll.indeterminate = false;
-    updateSelection();
+    saveSelected([]);
+    updateUI();
 }
 
 function exportSelectedPdf() {
-    const checked = document.querySelectorAll('.product-checkbox:checked');
-    if (checked.length === 0) {
+    const ids = loadSelected();
+    if (ids.length === 0) {
         alert('กรุณาเลือกสินค้าอย่างน้อย 1 รายการ');
         return;
     }
 
-    const productIds = Array.from(checked).map(cb => cb.value);
     const supplierId = '{{ request('supplier_id') }}';
-
     const form = document.createElement('form');
     form.method = 'GET';
     form.action = '{{ route('reports.low_stock_products.purchase_order_preview') }}';
 
-    productIds.forEach(id => {
+    ids.forEach(id => {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'product_ids[]';
@@ -222,5 +260,10 @@ function exportSelectedPdf() {
     form.submit();
     document.body.removeChild(form);
 }
+
+// โหลด selected เมื่อหน้าโหลด
+document.addEventListener('DOMContentLoaded', function() {
+    updateUI();
+});
 </script>
 @endpush
