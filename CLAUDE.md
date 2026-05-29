@@ -242,7 +242,11 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan migrate --force
+php scripts/register_dompdf_fonts.php   # REQUIRED after every pull — regenerates .ufm font cache
 ```
+
+> **Note:** `storage/fonts/*.ufm` and `*.json` are gitignored (generated files).  
+> If PDF generation throws `Undefined array key …thsarabunnew_…` run the script above.
 
 ---
 
