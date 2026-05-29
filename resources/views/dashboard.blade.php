@@ -225,9 +225,9 @@
 {{-- HERO SECTION --}}
 <div class="hero-section">
     <div style="font-size:14px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;">ภาพรวมระบบ</div>
-    <div style="font-size:24px;font-weight:500;color:white;margin-bottom:14px;">
+    <div style="font-size:20px;font-weight:500;color:white;margin-bottom:14px;">
         โรงพยาบาลวัดห้วยปลากั้งเพื่อสังคม
-        <span style="font-size:14px;color:rgba(255,255,255,0.5);font-weight:400;margin-left:8px;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.5);font-weight:400;margin-left:8px;">
             {{ \Carbon\Carbon::now()->timezone('Asia/Bangkok')->isoFormat('D MMMM YYYY') }}
         </span>
     </div>
